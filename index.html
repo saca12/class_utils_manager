@@ -1,0 +1,1874 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ESI CLASS UTILS MANAGER</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @keyframes fadeOut {
+        from {
+          opacity: 1;
+          transform: translateY(0);
+        }
+        to {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+      }
+      @keyframes modalFadeIn {
+        from {
+          opacity: 0;
+          transform: scale(0.95);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+      @keyframes modalFadeOut {
+        from {
+          opacity: 1;
+          transform: scale(1);
+        }
+        to {
+          opacity: 0;
+          transform: scale(0.95);
+        }
+      }
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateX(-20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+      @keyframes zoomIn {
+        from {
+          transform: scale(0.95);
+        }
+        to {
+          transform: scale(1);
+        }
+      }
+      @keyframes underlineSlide {
+        from {
+          width: 0;
+        }
+        to {
+          width: 100%;
+        }
+      }
+      .fade-in {
+        animation: fadeIn 0.5s ease-out;
+      }
+      .fade-out {
+        animation: fadeOut 0.3s ease-out forwards;
+      }
+      .modal-fade-in {
+        animation: modalFadeIn 0.3s ease-out;
+      }
+      .modal-fade-out {
+        animation: modalFadeOut 0.3s ease-out forwards;
+      }
+      .slide-in {
+        animation: slideIn 0.5s ease-out;
+      }
+      .zoom-in {
+        animation: zoomIn 0.7s ease-out;
+      }
+      .btn-transition {
+        transition: all 0.3s ease;
+      }
+      .btn-transition:hover {
+        transform: scale(1.05);
+      }
+      .profile-btn:hover {
+        transform: rotate(10deg);
+      }
+      .card-transition {
+        transition: all 0.3s ease;
+      }
+      .card-transition:hover {
+        transform: translateY(-5px);
+      }
+      .tab.active::after {
+        content: "";
+        display: block;
+        height: 2px;
+        background-color: #80acfe;
+        animation: underlineSlide 0.3s ease-out forwards;
+      }
+      .salle-item {
+        animation: fadeIn 0.5s ease-out;
+        animation-delay: calc(var(--index) * 0.1s);
+      }
+      .nav-links li {
+        animation: slideIn 0.5s ease-out;
+        animation-delay: calc(var(--index) * 0.1s);
+      }
+      .salle-info {
+        padding: 1.5rem;
+      }
+      .salle-spec {
+        margin-bottom: 0.75rem;
+      }
+      .salle-description {
+        margin-bottom: 1rem;
+      }
+      footer {
+        border-top: 2px solid #80acfe;
+      }
+      .footer-section {
+        border: 1px solid #1f3a73;
+        padding: 1rem;
+        border-radius: 0.5rem;
+      }
+      .hamburger {
+        display: none;
+        font-size: 1.5rem;
+        background: none;
+        border: none;
+        color: #80acfe;
+        cursor: pointer;
+        padding: 0.5rem;
+      }
+      .nav-menu {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        background: #525b52;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        position: absolute;
+        top: 4rem;
+        right: 1rem;
+        z-index: 10;
+        transform-origin: top right;
+        animation: slideDown 0.3s ease-out forwards;
+      }
+      .nav-menu.hidden {
+        display: none;
+      }
+      .nav-links {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      .nav-links li {
+        width: 100% 3rem;
+        text-align: left;
+      }
+      .nav-links a {
+        display: block;
+        padding: 0.5rem 2rem;
+      }
+      @media (max-width: 768px) {
+        .hamburger {
+          display: block;
+          position: absolute;
+          right: 5px;
+          top: 3%;
+        }
+        .navigate .nav-bar {
+          display: none;
+        }
+        .nav-menu {
+          display: none;
+        }
+        .nav-menu.active {
+          display: flex;
+          position: absolute;
+          top: 5%;
+          right: 10%;
+        }
+        .login-btn,
+        .user-profile {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body class="bg-[#3c424e] min-h-screen text-white font-sans">
+    <header
+      class="bg-[#525b52] p-4 sm:p-6 flex flex-col sm:flex-row justify-between items-center border-b border-[#1f3a73]"
+    >
+      <div class="logo flex items-center gap-4">
+        <div
+          class="logo-img w-14 h-14 rounded-full overflow-hidden border-2 border-[#1f3a73]"
+        >
+          <img
+            src="./images/esi.jpg.webp"
+            alt="ESI Logo"
+            class="w-full h-full object-cover"
+            onerror="this.src='https://via.placeholder.com/56?text=ESI+Logo'"
+          />
+        </div>
+        <div class="logo-text text-[#80acfe] text-lg sm:text-xl font-bold">
+          Ecole Supérieure d'Informatique
+        </div>
+      </div>
+      <div class="navigate flex items-center gap-6 sm:gap-8 mt-4 sm:mt-0">
+        <button class="hamburger" id="hamburgerBtn">☰</button>
+        <nav class="nav-bar">
+          <ul
+            class="nav-links flex flex-col sm:flex-row gap-2 sm:gap-6 text-center"
+          >
+            <li
+              class="home active text-sm sm:text-base px-4 py-2 rounded-lg bg-[#1f3a73]/30 hover:bg-[#1f3a73]/50 transition-all cursor-pointer font-medium"
+              data-page="home"
+              style="--index: 0"
+            >
+              Acceuil
+            </li>
+            <li
+              class="classroom-manager text-sm sm:text-base px-4 py-2 rounded-lg bg-[#1f3a73]/30 hover:bg-[#1f3a73]/50 transition-all cursor-pointer font-medium"
+              data-page="classroom_manager"
+              style="--index: 1"
+            >
+              Gestion des salles
+            </li>
+            <li style="--index: 2">
+              <a
+                href="Statistique.html"
+                class="text-sm sm:text-base px-4 py-2 rounded-lg bg-[#1f3a73]/30 hover:bg-[#1f3a73]/50 transition-all block text-white no-underline font-medium"
+                >Statistiques</a
+              >
+            </li>
+            <li style="--index: 3">
+              <a
+                href="About.html"
+                class="text-sm sm:text-base px-4 py-2 rounded-lg bg-[#1f3a73]/30 hover:bg-[#1f3a73]/50 transition-all block text-white no-underline font-medium"
+                >A propos</a
+              >
+            </li>
+          </ul>
+        </nav>
+        <button
+          class="login-btn bg-[#a25100] text-white px-4 py-2 rounded-lg text-sm sm:text-base font-medium btn-transition hover:bg-[#c26202] hidden"
+          id="loginBtn"
+        >
+          Login
+        </button>
+        <div class="user-profile" id="userProfile">
+          <button
+            class="profile-btn w-10 h-10 rounded-full bg-[#a25100] text-white flex items-center justify-center font-bold text-sm btn-transition hover:bg-[#c26202]"
+            id="profileBtn"
+          ></button>
+          <div
+            class="profile-menu absolute hidden bg-[#525b52] p-4 rounded-lg shadow-lg border border-[#1f3a73] mt-2 right-0 w-64 z-10"
+            id="profileMenu"
+          >
+            <div class="profile-info text-[#efe9e9] text-sm mb-4">
+              <p id="profileName" class="font-bold"></p>
+              <p id="profileEmail" class="text-gray-300"></p>
+              <p id="profileMatricule" class="text-gray-300"></p>
+            </div>
+            <button
+              id="logoutBtn"
+              class="w-full bg-[#a25100] text-white py-2 rounded-md btn-transition hover:bg-[#c26202]"
+            >
+              Déconnexion
+            </button>
+          </div>
+        </div>
+        <div class="nav-menu hidden" id="navMenu">
+          <ul class="nav-links">
+            <li
+              class="home active text-sm sm:text-base px-4 py-2 rounded-lg bg-[#1f3a73]/30 hover:bg-[#1f3a73]/50 transition-all cursor-pointer font-medium"
+              data-page="home"
+              style="--index: 0"
+            >
+              Home
+            </li>
+            <li
+              class="classroom-manager text-sm sm:text-base px-4 py-2 rounded-lg bg-[#1f3a73]/30 hover:bg-[#1f3a73]/50 transition-all cursor-pointer font-medium"
+              data-page="classroom_manager"
+              style="--index: 1"
+            >
+              Classroom Manager
+            </li>
+            <li style="--index: 2">
+              <a
+                href="Statistique.html"
+                class="text-sm sm:text-base px-4 py-2 rounded-lg bg-[#1f3a73]/30 hover:bg-[#1f3a73]/50 transition-all block text-white no-underline font-medium"
+                >Statistics</a
+              >
+            </li>
+            <li style="--index: 3">
+              <a
+                href="About.html"
+                class="text-sm sm:text-base px-4 py-2 rounded-lg bg-[#1f3a73]/30 hover:bg-[#1f3a73]/50 transition-all block text-white no-underline font-medium"
+                >About</a
+              >
+            </li>
+          </ul>
+        </div>
+      </div>
+    </header>
+
+    <main
+      class="content-container max-w-6xl mx-auto bg-[#525b52] p-6 sm:p-8 mt-4 rounded-lg border border-[#1f3a73] shadow-xl"
+    >
+      <div class="home-content fade-in" id="homeContent" aria-hidden="false">
+        <h1
+          class="page-title text-2xl sm:text-3xl font-bold text-[#80acfe] text-center mb-8 border-b-2 border-[#1f3a73] pb-2"
+        >
+          GESTION DES SALLES DE TP DE L'ESI
+        </h1>
+        <div
+          class="welcome-message text-center text-[#efe9e9] text-lg sm:text-xl mb-4"
+        >
+          <p>
+            Gérez efficacement vos salles de travaux pratiques avec notre
+            système intégré.
+          </p>
+          <p>
+            Réservez, planifiez et optimisez l'utilisation de vos espaces
+            d'apprentissage.
+          </p>
+        </div>
+        <img
+          src="images/classroom.jpg"
+          alt="Salle M1"
+          class="home-image w-full max-w-3xl mx-auto rounded-lg border-2 border-[#1f3a73] shadow-lg zoom-in"
+          onerror="this.src='https://via.placeholder.com/600x300?text=Salle+M1'"
+        />
+      </div>
+
+      <div
+        class="classroom-manager-content hidden"
+        id="classroomContent"
+        aria-hidden="true"
+      >
+        <h1
+          class="page-title text-2xl sm:text-3xl font-bold text-[#80acfe] text-center mb-8 border-b-2 border-[#1f3a73] pb-2"
+        >
+          Gestion des Salles de TP
+        </h1>
+        <div class="tabs flex border-b border-[#1f3a73] mb-4">
+          <div
+            class="tab active text-sm sm:text-base px-4 py-2 rounded-t-lg bg-[#1f3a73]/30 text-[#80acfe] font-bold cursor-pointer hover:bg-[#1f3a73]/50 transition-all relative"
+            data-tab="salles"
+          >
+            Salles
+          </div>
+          <div
+            class="tab text-sm sm:text-base px-4 py-2 rounded-t-lg bg-[#1f3a73]/30 text-white font-medium cursor-pointer hover:bg-[#1f3a73]/50 transition-all relative"
+            data-tab="tp"
+          >
+            Travaux Pratiques
+          </div>
+        </div>
+
+        <div class="salles-section fade-in" id="sallesTab" aria-hidden="false">
+          <h2 class="text-xl text-[#80acfe] mb-4">Liste des Salles de TP</h2>
+          <div
+            class="salle-grid flex flex-wrap gap-6 justify-center"
+            id="salleGrid"
+          >
+            <div
+              class="add-salle-card card-transition w-96 h-80 bg-[#1f3a73]/20 border-2 border-dashed border-[#1f3a73] flex flex-col justify-center items-center rounded-lg cursor-pointer hover:bg-[#1f3a73]/40 hover:border-[#80acfe]"
+              id="addSalleBtn"
+            >
+              <div class="add-icon text-5xl text-[#80acfe]">+</div>
+              <div class="add-text text-[#80acfe] text-lg font-medium">
+                Ajouter Salle
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tp-section hidden" id="tpTab" aria-hidden="true">
+          <h2 class="text-xl text-[#80acfe] mb-4">
+            Liste des Travaux Pratiques
+          </h2>
+          <div class="tp-grid flex flex-wrap gap-6 justify-center" id="tpGrid">
+            <div
+              class="add-salle-card card-transition w-96 h-80 bg-[#1f3a73]/20 border-2 border-dashed border-[#1f3a73] flex flex-col justify-center items-center rounded-lg cursor-pointer hover:bg-[#1f3a73]/40 hover:border-[#80acfe]"
+              id="addTpBtn"
+            >
+              <div class="add-icon text-5xl text-[#80acfe]">+</div>
+              <div class="add-text text-[#80acfe] text-lg font-medium">
+                Ajouter TP
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <div
+      class="modal hidden fixed inset-0 bg-black/70 z-50 flex items-center justify-center overflow-y-auto"
+      id="editModal"
+      aria-hidden="true"
+    >
+      <div
+        class="modal-content bg-[#525b52] p-6 sm:p-8 rounded-lg w-full max-w-lg border border-[#1f3a73] max-h-[90vh] overflow-y-auto modal-fade-in"
+        role="dialog"
+        aria-labelledby="editModalTitle"
+      >
+        <h2
+          class="modal-title text-xl sm:text-2xl text-[#80acfe] mb-4 text-center border-b border-[#1f3a73] pb-2"
+          id="editModalTitle"
+        >
+          Modifier la salle
+        </h2>
+        <form id="editForm" class="space-y-4">
+          <input type="hidden" id="edit-id" name="edit-id" />
+          <div class="form-group">
+            <label
+              for="edit-nom"
+              class="block text-[#80acfe] text-sm sm:text-base mb-2"
+              >Nom de la salle</label
+            >
+            <input
+              type="text"
+              id="edit-nom"
+              name="edit-nom"
+              required
+              class="w-full p-3 rounded-md bg-[#3c424e] text-white border border-[#1f3a73] focus:border-[#80acfe] focus:ring-2 focus:ring-[#80acfe] transition duration-200"
+              aria-required="true"
+            />
+          </div>
+          <div class="form-group">
+            <label
+              for="edit-batiment"
+              class="block text-[#80acfe] text-sm sm:text-base mb-2"
+              >Bâtiment</label
+            >
+            <input
+              type="text"
+              id="edit-batiment"
+              name="edit-batiment"
+              required
+              class="w-full p-3 rounded-md bg-[#3c424e] text-white border border-[#1f3a73] focus:border-[#80acfe] focus:ring-2 focus:ring-[#80acfe] transition duration-200"
+              aria-required="true"
+            />
+          </div>
+          <div class="form-group">
+            <label
+              for="edit-etage"
+              class="block text-[#80acfe] text-sm sm:text-base mb-2"
+              >Étage</label
+            >
+            <input
+              type="text"
+              id="edit-etage"
+              name="edit-etage"
+              class="w-full p-3 rounded-md bg-[#3c424e] text-white border border-[#1f3a73] focus:border-[#80acfe] focus:ring-2 focus:ring-[#80acfe] transition duration-200"
+            />
+          </div>
+          <div class="form-group">
+            <label
+              for="edit-capacite"
+              class="block text-[#80acfe] text-sm sm:text-base mb-2"
+              >Capacité</label
+            >
+            <input
+              type="number"
+              id="edit-capacite"
+              name="edit-capacite"
+              min="1"
+              required
+              class="w-full p-3 rounded-md bg-[#3c424e] text-white border border-[#1f3a73] focus:border-[#80acfe] focus:ring-2 focus:ring-[#80acfe] transition duration-200"
+              aria-required="true"
+            />
+          </div>
+          <div class="form-group">
+            <label
+              for="edit-tables"
+              class="block text-[#80acfe] text-sm sm:text-base mb-2"
+              >Nombre de tables</label
+            >
+            <input
+              type="number"
+              id="edit-tables"
+              name="edit-tables"
+              min="0"
+              required
+              class="w-full p-3 rounded-md bg-[#3c424e] text-white border border-[#1f3a73] focus:border-[#80acfe] focus:ring-2 focus:ring-[#80acfe] transition duration-200"
+              aria-required="true"
+            />
+          </div>
+          <div class="form-group">
+            <label
+              for="edit-chaises"
+              class="block text-[#80acfe] text-sm sm:text-base mb-2"
+              >Nombre de chaises</label
+            >
+            <input
+              type="number"
+              id="edit-chaises"
+              name="edit-chaises"
+              min="0"
+              required
+              class="w-full p-3 rounded-md bg-[#3c424e] text-white border border-[#1f3a73] focus:border-[#80acfe] focus:ring-2 focus:ring-[#80acfe] transition duration-200"
+              aria-required="true"
+            />
+          </div>
+          <div class="form-group">
+            <label
+              for="edit-prises"
+              class="block text-[#80acfe] text-sm sm:text-base mb-2"
+              >Nombre de prises</label
+            >
+            <input
+              type="number"
+              id="edit-prises"
+              name="edit-prises"
+              min="0"
+              required
+              class="w-full p-3 rounded-md bg-[#3c424e] text-white border border-[#1f3a73] focus:border-[#80acfe] focus:ring-2 focus:ring-[#80acfe] transition duration-200"
+              aria-required="true"
+            />
+          </div>
+          <div class="form-group">
+            <label
+              for="edit-etat"
+              class="block text-[#80acfe] text-sm sm:text-base mb-2"
+              >État général</label
+            >
+            <select
+              id="edit-etat"
+              name="edit-etat"
+              class="w-full p-3 rounded-md bg-[#3c424e] text-white border border-[#1f3a73] focus:border-[#80acfe] focus:ring-2 focus:ring-[#80acfe] transition duration-200"
+              aria-required="true"
+            >
+              <option value="excellent">Excellent</option>
+              <option value="bon">Bon</option>
+              <option value="moyen">Moyen</option>
+              <option value="mauvais">Mauvais</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label
+              for="edit-description"
+              class="block text-[#80acfe] text-sm sm:text-base mb-2"
+              >Problèmes connus</label
+            >
+            <textarea
+              id="edit-description"
+              name="edit-description"
+              rows="3"
+              class="w-full p-3 rounded-md bg-[#3c424e] text-white border border-[#1f3a73] focus:border-[#80acfe] focus:ring-2 focus:ring-[#80acfe] transition duration-200"
+            ></textarea>
+          </div>
+          <div class="modal-actions flex justify-end gap-4">
+            <button
+              type="button"
+              class="modal-btn bg-gray-500 text-white px-4 py-2 rounded-md text-sm sm:text-base btn-transition hover:bg-gray-600"
+              id="cancelEdit"
+              aria-label="Annuler la modification"
+            >
+              Annuler
+            </button>
+            <button
+              type="submit"
+              class="modal-btn bg-[#a25100] text-white px-4 py-2 rounded-md text-sm sm:text-base btn-transition hover:bg-[#c26202]"
+              aria-label="Enregistrer les modifications"
+            >
+              Enregistrer
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div
+      class="modal hidden fixed inset-0 bg-black/70 z-50 flex items-center justify-center overflow-y-auto"
+      id="reserveModal"
+      aria-hidden="true"
+    >
+      <div
+        class="modal-content bg-[#525b52] p-6 sm:p-8 rounded-lg w-full max-w-lg border border-[#1f3a73] max-h-[90vh] overflow-y-auto modal-fade-in"
+        role="dialog"
+        aria-labelledby="reserveModalTitle"
+      >
+        <h2
+          class="modal-title text-xl sm:text-2xl text-[#80acfe] mb-4 text-center border-b border-[#1f3a73] pb-2"
+          id="reserveModalTitle"
+        >
+          Réserver une salle
+        </h2>
+        <form id="reserveForm" class="space-y-4">
+          <input type="hidden" id="reserve-salle-id" name="reserve-salle-id" />
+          <div class="form-group">
+            <label
+              for="reserve-date"
+              class="block text-[#80acfe] text-sm sm:text-base mb-2"
+              >Date</label
+            >
+            <input
+              type="date"
+              id="reserve-date"
+              name="reserve-date"
+              required
+              class="w-full p-3 rounded-md bg-[#3c424e] text-white border border-[#1f3a73] focus:border-[#80acfe] focus:ring-2 focus:ring-[#80acfe] transition duration-200"
+              aria-required="true"
+            />
+          </div>
+          <div class="flex gap-4">
+            <div class="form-group flex-1">
+              <label
+                for="reserve-heure-debut"
+                class="block text-[#80acfe] text-sm sm:text-base mb-2"
+                >Heure de début</label
+              >
+              <input
+                type="time"
+                id="reserve-heure-debut"
+                name="reserve-heure-debut"
+                required
+                class="w-full p-3 rounded-md bg-[#3c424e] text-white border border-[#1f3a73] focus:border-[#80acfe] focus:ring-2 focus:ring-[#80acfe] transition duration-200"
+                aria-required="true"
+              />
+            </div>
+            <div class="form-group flex-1">
+              <label
+                for="reserve-heure-fin"
+                class="block text-[#80acfe] text-sm sm:text-base mb-2"
+                >Heure de fin</label
+              >
+              <input
+                type="time"
+                id="reserve-heure-fin"
+                name="reserve-heure-fin"
+                required
+                class="w-full p-3 rounded-md bg-[#3c424e] text-white border border-[#1f3a73] focus:border-[#80acfe] focus:ring-2 focus:ring-[#80acfe] transition duration-200"
+                aria-required="true"
+              />
+            </div>
+          </div>
+          <div class="form-group">
+            <label
+              for="reserve-motif"
+              class="block text-[#80acfe] text-sm sm:text-base mb-2"
+              >Motif</label
+            >
+            <textarea
+              id="reserve-motif"
+              name="reserve-motif"
+              rows="3"
+              class="w-full p-3 rounded-md bg-[#3c424e] text-white border border-[#1f3a73] focus:border-[#80acfe] focus:ring-2 focus:ring-[#80acfe] transition duration-200"
+            ></textarea>
+          </div>
+          <div class="modal-actions flex justify-end gap-4">
+            <button
+              type="button"
+              class="modal-btn bg-gray-500 text-white px-4 py-2 rounded-md text-sm sm:text-base btn-transition hover:bg-gray-600"
+              id="cancelReserve"
+              aria-label="Annuler la réservation"
+            >
+              Annuler
+            </button>
+            <button
+              type="submit"
+              class="modal-btn bg-[#a25100] text-white px-4 py-2 rounded-md text-sm sm:text-base btn-transition hover:bg-[#c26202]"
+              aria-label="Confirmer la réservation"
+            >
+              Réserver
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <footer class="bg-[#2d2f36] text-white py-8">
+      <div
+        class="max-w-6xl mx-auto px-4 sm:px-6 grid grid-cols-1 sm:grid-cols-3 gap-8"
+      >
+        <div class="footer-section">
+          <h3 class="text-lg font-bold text-[#80acfe] mb-4">Partenaires</h3>
+          <ul class="space-y-2 text-sm">
+            <li>
+              <a href="#" class="hover:text-[#80acfe] transition duration-200"
+                >Ministère de l'Enseignement Superieur, de la Recherche et de
+                l'Innovation</a
+              >
+            </li>
+            <li>
+              <a href="#" class="hover:text-[#80acfe] transition duration-200"
+                >Université Nazi Boni</a
+              >
+            </li>
+            <li>
+              <a href="#" class="hover:text-[#80acfe] transition duration-200"
+                >MicraV</a
+              >
+            </li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h3 class="text-lg font-bold text-[#80acfe] mb-4">Nous contacter</h3>
+          <p class="text-sm">
+            Email:
+            <a
+              href="mailto:contact@university.com"
+              class="hover:text-[#80acfe] transition duration-200"
+              >esi@unb.com</a
+            >
+          </p>
+          <p class="text-sm">
+            Téléphone:
+            <a
+              href="tel:+1234567890"
+              class="hover:text-[#80acfe] transition duration-200"
+              >+226 07-07-07-07</a
+            >
+          </p>
+          <p class="text-sm">Adresse: Bobo-Dioulasso, Nasso & Secteur 22</p>
+        </div>
+        <div class="footer-section">
+          <h3 class="text-lg font-bold text-[#80acfe] mb-4">Suivez-nous</h3>
+          <div class="flex space-x-4">
+            <a
+              href="https://facebook.com"
+              target="_blank"
+              class="hover:text-[#80acfe] transition duration-200"
+              aria-label="Facebook"
+            >
+              <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                <path
+                  d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.845c0-2.507 1.493-3.89 3.776-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.772-1.63 1.563V12h2.773l-.443 2.89h-2.33v6.987C18.343 21.128 22 16.991 22 12z"
+                />
+              </svg>
+            </a>
+            <a
+              href="https://twitter.com"
+              target="_blank"
+              class="hover:text-[#80acfe] transition duration-200"
+              aria-label="Twitter"
+            >
+              <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                <path
+                  d="M22.46 6c-.77.35-1.6.58-2.46.69a4.3 4.3 0 001.88-2.38 8.59 8.59 0 01-2.72 1.04A4.28 4.28 0 0016 4.57c0-.04 0-.08-.01-.12A4.29 4.29 0 0011.7 8.86a4.24 4.24 0 01-.19-1 4.28 4.28 0 00-4.29 4.29c0 .34.04.67.11.99a12.16 12.16 0 01-8.83-4.48 4.27 4.27 0 001.32 5.71 4.24 4.24 0 01-1.94-.54v.05a4.29 4.29 0 003.44 4.2 4.26 4.26 0 01-1.93.07 4.29 4.29 0 004 2.98A8.58 8.58 0 012 19.54a12.11 12.11 0 006.58 1.93c7.9 0 12.22-6.54 12.22-12.22 0-.19 0-.37-.01-.55A8.72 8.72 0 0022.46 6z"
+                />
+              </svg>
+            </a>
+            <a
+              href="https://linkedin.com"
+              target="_blank"
+              class="hover:text-[#80acfe] transition duration-200"
+              aria-label="LinkedIn"
+            >
+              <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                <path
+                  d="M20.447 20.452h-3.554v-5.569c0-1.328-.024-3.037-1.85-3.037-1.852 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.048c.476-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.225 0z"
+                />
+              </svg>
+            </a>
+            <a
+              href="https://instagram.com"
+              target="_blank"
+              class="hover:text-[#80acfe] transition duration-200"
+              aria-label="Instagram"
+            >
+              <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                <path
+                  d="M12 2.163c3.204 0 3.584.012 4.85.07 1.366.062 2.633.326 3.608 1.301.975.975 1.24 2.242 1.301 3.608.058 1.266.07 1.646.07 4.85s-.012 3.584-.07 4.85c-.062 1.366-.326 2.633-1.301 3.608-.975.975-2.242 1.24-3.608 1.301-1.266.058-1.646.07-4.85.07s-3.584-.012-4.85-.07c-1.366-.062-2.633-.326-3.608-1.301-.975-.975-1.24-2.242-1.301-3.608-.058-1.266-.07-1.646-.07-4.85s.012-3.584.07-4.85c.062-1.366.326-2.633 1.301-3.608.975-.975 2.242-1.24 3.608-1.301 1.266-.058 1.646-.07 4.85-.07zm0-2.163c-3.259 0-3.667.014-4.947.072-1.408.064-2.797.392-3.872 1.467-1.075 1.075-1.403 2.464-1.467 3.872-.058 1.28-.072 1.688-.072 4.947s.014 3.667.072 4.947c.064 1.408.392 2.797 1.467 3.872 1.075 1.075 2.464 1.403 3.872 1.467 1.28.058 1.688.072 4.947.072s3.667-.014 4.947-.072c1.408-.064 2.797-.392 3.872-1.467 1.075-1.075 1.403-2.464 1.467-3.872.058-1.28.072-1.688.072-4.947s-.014-3.667-.072-4.947c-.064-1.408-.392-2.797-1.467-3.872-1.075-1.075-2.464-1.403-3.872-1.467-1.28-.058-1.688-.072-4.947-.072zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zm0 10.162a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100-2.88 1.44 1.44 0 000 2.88z"
+                />
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      // Initialisation au chargement de la page
+      document.addEventListener("DOMContentLoaded", () => {
+        // Vérification de l'authentification
+        const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+        if (!isLoggedIn) {
+          window.location.href = "connexion.html";
+          return;
+        }
+        const hamburgerBtn = document.getElementById("hamburgerBtn");
+        const navMenu = document.getElementById("navMenu");
+        hamburgerBtn.addEventListener("click", () => {
+          navMenu.classList.toggle("active");
+          navMenu.classList.toggle("hidden");
+        });
+
+        // Fermer le menu si on clique en dehors
+        document.addEventListener("click", (e) => {
+          if (!hamburgerBtn.contains(e.target) && !navMenu.contains(e.target)) {
+            navMenu.classList.add("hidden");
+            navMenu.classList.remove("active");
+          }
+        });
+
+        // Gestion de la navigation (mise à jour pour fermer le menu)
+        if (homeLink) {
+          homeLink.addEventListener("click", () => {
+            homeContent.classList.remove("hidden", "fade-out");
+            homeContent.classList.add("fade-in");
+            homeContent.setAttribute("aria-hidden", "false");
+            classroomContent.classList.add("hidden");
+            classroomContent.classList.remove("fade-in");
+            classroomContent.classList.add("fade-out");
+            classroomContent.setAttribute("aria-hidden", "true");
+            setTimeout(
+              () => classroomContent.classList.remove("fade-out"),
+              300
+            );
+            homeLink.classList.add("active");
+            classroomLink.classList.remove("active");
+            navMenu.classList.add("hidden");
+            navMenu.classList.remove("active");
+          });
+        }
+
+        if (classroomLink) {
+          classroomLink.addEventListener("click", () => {
+            homeContent.classList.add("hidden");
+            homeContent.classList.remove("fade-in");
+            homeContent.classList.add("fade-out");
+            homeContent.setAttribute("aria-hidden", "true");
+            classroomContent.classList.remove("hidden", "fade-out");
+            classroomContent.classList.add("fade-in");
+            classroomContent.setAttribute("aria-hidden", "false");
+            setTimeout(() => homeContent.classList.remove("fade-out"), 300);
+            classroomLink.classList.add("active");
+            homeLink.classList.remove("active");
+            tabs.forEach((t) => t.classList.remove("active"));
+            const sallesTabButton = document.querySelector(
+              '.tab[data-tab="salles"]'
+            );
+            if (sallesTabButton) {
+              sallesTabButton.classList.add("active");
+              sallesTab.classList.remove("hidden", "fade-out");
+              sallesTab.classList.add("fade-in");
+              sallesTab.setAttribute("aria-hidden", "false");
+              tpTab.classList.add("hidden");
+              tpTab.classList.remove("fade-in");
+              tpTab.classList.add("fade-out");
+              tpTab.setAttribute("aria-hidden", "true");
+              setTimeout(() => tpTab.classList.remove("fade-out"), 300);
+              displaySalles();
+            }
+            navMenu.classList.add("hidden");
+            navMenu.classList.remove("active");
+          });
+        }
+
+        initAuthUI();
+
+        // Charger les salles
+        fetch("./scripts/classroom.php", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${getUserId() || ""}`
+          }
+        })
+          .then((response) => {
+            if (!response.ok)
+              throw new Error(`HTTP error! status: ${response.status}`);
+            return response.json();
+          })
+          .then((data) => {
+            if (data.success) {
+              salles = data.salles.map((salle) => ({
+                ...salle,
+                id: salle.id.toString().replace("salle_", ""),
+                computers: salle.computers || []
+              }));
+              localStorage.setItem("salles", JSON.stringify(salles));
+              console.log("Salles récupérées:", salles);
+              displaySalles();
+              displayStats();
+            } else {
+              console.error(
+                "Erreur lors de la récupération des salles:",
+                data.message
+              );
+              alert(
+                "Erreur lors de la récupération des salles: " + data.message
+              );
+            }
+          })
+          .catch((error) => {
+            console.error("Erreur fetch:", error);
+            alert("Une erreur s’est produite lors du chargement des salles.");
+          });
+
+        // Charger les réservations
+        displayReservations()
+          .then(() => {
+            reservations =
+              JSON.parse(localStorage.getItem("reservations")) || [];
+            console.log("Réservations récupérées:", reservations);
+            updateSalleDisponibilite();
+            displaySalles();
+            displayStats();
+          })
+          .catch((error) => {
+            console.error("Erreur lors du chargement des réservations:", error);
+            if (error.message.includes("Utilisateur non connecté")) {
+              window.location.href = "connexion.html";
+            } else {
+              alert(
+                "Une erreur s’est produite lors du chargement des réservations."
+              );
+            }
+          });
+      });
+
+      // Variables globales
+      let salles = JSON.parse(localStorage.getItem("salles")) || [];
+      let reservations = JSON.parse(localStorage.getItem("reservations")) || [];
+      let currentEditId = null;
+
+      // Sélection des éléments DOM
+      const loginBtn = document.getElementById("loginBtn");
+      const userProfile = document.getElementById("userProfile");
+      const profileBtn = document.getElementById("profileBtn");
+      const profileMenu = document.getElementById("profileMenu");
+      const profileName = document.getElementById("profileName");
+      const profileEmail = document.getElementById("profileEmail");
+      const profileMatricule = document.getElementById("profileMatricule");
+      const logoutBtn = document.getElementById("logoutBtn");
+      const homeLink = document.querySelector(".home");
+      const classroomLink = document.querySelector(".classroom-manager");
+      const homeContent = document.getElementById("homeContent");
+      const classroomContent = document.getElementById("classroomContent");
+      const salleGrid = document.getElementById("salleGrid");
+      const addSalleBtn = document.getElementById("addSalleBtn");
+      const editModal = document.getElementById("editModal");
+      const editForm = document.getElementById("editForm");
+      const cancelEditBtn = document.getElementById("cancelEdit");
+      const sallesTab = document.getElementById("sallesTab");
+      const tpTab = document.getElementById("tpTab");
+      const tpGrid = document.getElementById("tpGrid");
+      const addTpBtn = document.getElementById("addTpBtn");
+      const tabs = document.querySelectorAll(".tab");
+      const reserveModal = document.getElementById("reserveModal");
+      const reserveForm = document.getElementById("reserveForm");
+      const cancelReserveBtn = document.getElementById("cancelReserve");
+      const statsContainer = document.getElementById("statsContainer");
+
+      profileBtn.addEventListener("click", () => {
+        const isHidden = profileMenu.classList.contains("hidden");
+        if (isHidden) {
+          profileMenu.classList.remove("hidden");
+          profileMenu.classList.remove("modal-fade-out");
+          profileMenu.classList.add("modal-fade-in");
+          profileMenu.setAttribute("aria-hidden", "false");
+        } else {
+          profileMenu.classList.remove("modal-fade-in");
+          profileMenu.classList.add("modal-fade-out");
+          setTimeout(() => {
+            profileMenu.classList.add("hidden");
+            profileMenu.classList.remove("modal-fade-out");
+            profileMenu.setAttribute("aria-hidden", "true");
+          }, 300);
+        }
+      });
+
+      // Gestion du bouton de déconnexion
+      logoutBtn.addEventListener("click", () => {
+        localStorage.removeItem("isLoggedIn");
+        localStorage.removeItem("userData");
+        localStorage.removeItem("salles");
+        localStorage.removeItem("reservations");
+        window.location.href = "connexion.html";
+      });
+
+      // Initialisation de l'interface utilisateur
+      function initAuthUI() {
+        const userData = JSON.parse(localStorage.getItem("userData")) || null;
+        if (userData) {
+          loginBtn.classList.add("hidden");
+          userProfile.classList.remove("hidden");
+          profileBtn.textContent =
+            (userData.prenom?.charAt(0) || "") +
+            (userData.nom?.charAt(0) || "");
+          profileName.textContent = `${userData.prenom || ""} ${
+            userData.nom || ""
+          }`;
+          profileEmail.textContent = userData.email || "N/A";
+          profileMatricule.textContent = `Matricule: ${
+            userData.matricule || "N/A"
+          }`;
+        } else {
+          loginBtn.classList.remove("hidden");
+          userProfile.classList.add("hidden");
+          window.location.href = "connexion.html";
+        }
+      }
+
+      // Récupérer l'ID de l'utilisateur
+      function getUserId() {
+        const userData = JSON.parse(localStorage.getItem("userData")) || {};
+        return userData.id || null;
+      }
+
+      // Recharger les données des salles
+      function reloadSalleData() {
+        fetch("./scripts/classroom.php", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${getUserId() || ""}`
+          }
+        })
+          .then((response) => {
+            if (!response.ok)
+              throw new Error(`HTTP error! status: ${response.status}`);
+            return response.json();
+          })
+          .then((data) => {
+            if (data.success) {
+              salles = data.salles.map((salle) => ({
+                ...salle,
+                id: salle.id.toString().replace("salle_", ""),
+                computers: salle.computers || []
+              }));
+              localStorage.setItem("salles", JSON.stringify(salles));
+              console.log("Salles rechargées:", salles);
+              displaySalles();
+              displayStats();
+            } else {
+              console.error(
+                "Erreur lors du rechargement des salles:",
+                data.message
+              );
+            }
+          })
+          .catch((error) => {
+            console.error("Erreur fetch reload:", error);
+          });
+      }
+
+      // Afficher les salles
+      function displaySalles() {
+        if (!salleGrid) {
+          console.error("Élément #salleGrid non trouvé");
+          return;
+        }
+        document.querySelectorAll(".add-computer-btn").forEach((btn) => {
+          btn.addEventListener("click", (e) => {
+            const id = e.target.dataset.id.replace("salle_", "");
+            window.location.href = `carac_interne.html?classroom_id=${id}`;
+            console.log(
+              `Redirection vers carac_interne.html?classroom_id=${id}`
+            );
+          });
+        });
+        const cards = salleGrid.querySelectorAll(".salle-item");
+        cards.forEach((card) => card.remove());
+
+        if (salles.length === 0) {
+          console.log("Aucune salle à afficher");
+          return;
+        }
+
+        salles.forEach((salle, index) => {
+          const card = document.createElement("div");
+          card.className =
+            "salle-item card-transition w-96 bg-[#efe9e9]/10 rounded-lg border border-[#1f3a73] shadow-lg";
+          card.dataset.id = salle.id;
+          card.style.setProperty("--index", index);
+          const isOccupied = isSalleOccupied(salle.id);
+
+          // Calculer le nombre total d'ordinateurs avec quantite
+          const totalComputers = salle.computers
+            ? salle.computers.reduce(
+                (sum, comp) => sum + (comp.quantite || 1),
+                0
+              )
+            : 0;
+          const computerModels =
+            salle.computers && salle.computers.length > 0
+              ? salle.computers
+                  .map(
+                    (comp) =>
+                      `${comp.quantite || 1}x ${comp.marque} ${comp.modele}`
+                  )
+                  .join(", ")
+              : "Aucun ordinateur";
+
+          card.innerHTML = `
+            <img src="images/classroom.jpg" alt="${
+              salle.nom
+            }" class="salle-image w-full h-56 object-cover rounded-t-lg" onerror="this.src='https://via.placeholder.com/384x224?text=Salle+Image'">
+            <div class="salle-info p-6">
+              <div class="salle-name text-xl font-bold text-[#80acfe] mb-3">${
+                salle.nom
+              }</div>
+              <div class="salle-status px-3 py-1.5 rounded text-sm text-center ${
+                isOccupied
+                  ? "bg-red-600/20 text-red-600"
+                  : "bg-green-600/20 text-green-600"
+              }">
+                ${isOccupied ? "Occupée" : "Disponible"}
+              </div>
+              <div class="salle-spec text-sm mb-3"><strong>Localisation :</strong> ${
+                salle.batiment
+              }, ${salle.etage || "Non spécifié"}</div>
+              <div class="salle-spec text-sm mb-3"><strong>Équipements :</strong> ${totalComputers} ordinateur${
+            totalComputers !== 1 ? "s" : ""
+          } <p style = "color : #80acfe">(${computerModels})</p>, ${
+            salle.tables || 0
+          } tables, ${salle.chaises || 0} chaises, ${
+            salle.prises || 0
+          } prises</div>
+              <div class="salle-spec text-sm mb-3"><strong>État :</strong> ${
+                salle.etat || "Non spécifié"
+              }</div>
+              <div class="salle-actions flex gap-3 flex-wrap">
+                <button class="action-btn edit-btn bg-[#1f3a73] text-white px-4 py-1.5 rounded text-sm btn-transition hover:bg-[#2a4a8f]" data-id="${
+                  salle.id
+                }" aria-label="Modifier la salle ${salle.nom}">Modifier</button>
+                <button class="action-btn add-computer-btn bg-[#1f3a73] text-white px-4 py-1.5 rounded text-sm btn-transition hover:bg-[#2a4a8f]" data-id="${
+                  salle.id
+                }" aria-label="Ajouter un ordinateur à la salle ${
+            salle.nom
+          }">Ajouter un ordinateur</button>
+                <button class="action-btn delete-btn bg-red-800 text-white px-4 py-1.5 rounded text-sm btn-transition hover:bg-red-900" data-id="${
+                  salle.id
+                }" aria-label="Supprimer la salle ${
+            salle.nom
+          }">Supprimer</button>
+              </div>
+              ${
+                !isOccupied
+                  ? `<button class="action-btn reserve-btn bg-green-600 text-white px-4 py-1.5 rounded text-sm btn-transition hover:bg-green-700 mt-3 w-full" data-id="${salle.id}" aria-label="Réserver la salle ${salle.nom}">Réserver</button>`
+                  : ""
+              }
+            </div>
+          `;
+          salleGrid.insertBefore(card, addSalleBtn);
+        });
+
+        // Ajouter les gestionnaires d'événements pour les boutons
+        document.querySelectorAll(".edit-btn").forEach((btn) => {
+          btn.addEventListener("click", (e) => {
+            const id = e.target.dataset.id;
+            editSalle(id);
+          });
+        });
+
+        document.querySelectorAll(".add-computer-btn").forEach((btn) => {
+          btn.addEventListener("click", (e) => {
+            const id = e.target.dataset.id.replace("salle_", "");
+            window.location.href = `carac_interne.html?classroom_id=${id}`;
+          });
+        });
+
+        document.querySelectorAll(".delete-btn").forEach((btn) => {
+          btn.addEventListener("click", (e) => {
+            const id = e.target.dataset.id.replace("salle_", "");
+            deleteSalle(id);
+          });
+        });
+
+        document.querySelectorAll(".reserve-btn").forEach((btn) => {
+          btn.addEventListener("click", (e) => {
+            const id = e.target.dataset.id;
+            reserveSalle(id);
+          });
+        });
+      }
+
+      // Afficher les statistiques
+      function displayStats() {
+        if (!statsContainer) {
+          console.error("Élément #statsContainer non trouvé");
+          return;
+        }
+        statsContainer.innerHTML = `
+          <div class="bg-[#525b52] p-6 rounded-lg border border-[#1f3a73] shadow-lg">
+            <h2 class="text-xl font-bold text-[#80acfe] mb-4">Statistiques</h2>
+            <p class="text-sm text-[#efe9e9] mb-2"><strong>Nombre total de salles :</strong> ${
+              salles.length
+            }</p>
+            <p class="text-sm text-[#efe9e9] mb-2"><strong>Nombre total d'ordinateurs :</strong> ${salles.reduce(
+              (sum, salle) =>
+                sum +
+                (salle.computers
+                  ? salle.computers.reduce(
+                      (s, comp) => s + (comp.quantite || 1),
+                      0
+                    )
+                  : 0),
+              0
+            )}</p>
+            <p class="text-sm text-[#efe9e9] mb-2"><strong>Réservations actives :</strong> ${
+              reservations.filter((r) =>
+                r.schedules?.some(
+                  (s) => s.date >= new Date().toISOString().split("T")[0]
+                )
+              ).length
+            }</p>
+            <p class="text-sm text-[#efe9e9]"><strong>Capacité totale :</strong> ${salles.reduce(
+              (sum, salle) => sum + (salle.capacite || 0),
+              0
+            )} places</p>
+          </div>
+        `;
+      }
+
+      // Vérifier si une salle est occupée
+      function isSalleOccupied(salleId) {
+        const currentDate = new Date().toISOString().split("T")[0];
+        return reservations.some((r) => {
+          if (
+            !r ||
+            typeof r !== "object" ||
+            !r.salle_id ||
+            !Array.isArray(r.schedules)
+          )
+            return false;
+          return (
+            r.salle_id.replace("salle_", "") === salleId &&
+            r.schedules.some((s) => s && s.date >= currentDate)
+          );
+        });
+      }
+
+      // Modifier une salle
+      function editSalle(id) {
+        const salle = salles.find((s) => s.id === id);
+        if (!salle) {
+          alert("Salle non trouvée.");
+          return;
+        }
+
+        currentEditId = id;
+        document.getElementById("edit-id").value = id;
+        document.getElementById("edit-nom").value = salle.nom;
+        document.getElementById("edit-batiment").value = salle.batiment || "";
+        document.getElementById("edit-etage").value = salle.etage || "";
+        document.getElementById("edit-capacite").value = salle.capacite || 1;
+        document.getElementById("edit-tables").value = salle.tables || 0;
+        document.getElementById("edit-chaises").value = salle.chaises || 0;
+        document.getElementById("edit-prises").value = salle.prises || 0;
+        document.getElementById("edit-etat").value = salle.etat || "bon";
+        document.getElementById("edit-description").value =
+          salle.problemes || "";
+        editModal.classList.remove("hidden");
+        editModal.setAttribute("aria-hidden", "false");
+        editModal
+          .querySelector(".modal-content")
+          .classList.remove("modal-fade-out");
+        editModal
+          .querySelector(".modal-content")
+          .classList.add("modal-fade-in");
+      }
+
+      // Afficher les réservations
+      function displayReservations() {
+        if (!tpGrid) {
+          console.error("Élément #tpGrid non trouvé");
+          return Promise.resolve();
+        }
+
+        return fetch("./scripts/get_tps.php", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${getUserId() || ""}`
+          }
+        })
+          .then((response) => {
+            if (!response.ok)
+              throw new Error(`HTTP error! status: ${response.status}`);
+            return response.json();
+          })
+          .then((data) => {
+            if (data.success) {
+              reservations =
+                data.reservations.map((res) => ({
+                  ...res,
+                  salle_id: res.salle_id.replace("salle_", "")
+                })) || [];
+              localStorage.setItem(
+                "reservations",
+                JSON.stringify(reservations)
+              );
+              const cards = tpGrid.querySelectorAll(".salle-item");
+              cards.forEach((card) => card.remove());
+
+              if (reservations.length === 0) {
+                console.log("Aucune réservation à afficher");
+                return;
+              }
+
+              reservations.forEach((reservation, index) => {
+                const salleId = reservation.salle_id;
+                const salle = salles.find((s) => s.id === salleId);
+                const salleNom = salle ? salle.nom : "Salle inconnue";
+                const schedules = Array.isArray(reservation.schedules)
+                  ? reservation.schedules
+                  : [];
+
+                const card = document.createElement("div");
+                card.className =
+                  "salle-item card-transition w-96 bg-[#efe9e9]/10 rounded-lg border border-[#1f3a73] shadow-lg";
+                card.dataset.id = reservation.id;
+                card.style.setProperty("--index", index);
+                card.innerHTML = `
+                  <img src="images/classroom.jpg" alt="${
+                    reservation.tp_nom || "TP inconnu"
+                  }" class="salle-image w-full h-56 object-cover rounded-t-lg" onerror="this.src='https://via.placeholder.com/384x224?text=TP+Image'">
+                  <div class="salle-info p-6">
+                    <div class="salle-name text-xl font-bold text-[#80acfe] mb-3">${
+                      reservation.tp_nom || "Nom non défini"
+                    }</div>
+                    <div class="salle-status px-3 py-1.5 rounded text-sm text-center ${
+                      schedules.some(
+                        (s) =>
+                          s && s.date >= new Date().toISOString().split("T")[0]
+                      )
+                        ? "bg-green-600/20 text-green-600"
+                        : "bg-red-600/20 text-red-600"
+                    }">
+                      ${
+                        schedules.some(
+                          (s) =>
+                            s &&
+                            s.date >= new Date().toISOString().split("T")[0]
+                        )
+                          ? "À venir"
+                          : "Terminé"
+                      }
+                    </div>
+                    <p class="salle-description text-[#efe9e9] text-base mb-3">${
+                      reservation.matiere || "Aucune matière spécifiée"
+                    }</p>
+                    <div class="salle-spec text-sm mb-3"><strong>Salle :</strong> ${salleNom}</div>
+                    <div class="salle-spec text-sm mb-3"><strong>Logiciels :</strong> ${
+                      reservation.logiciels || "Aucun"
+                    }</div>
+                    <div class="salle-spec text-sm mb-3"><strong>Horaires :</strong> ${
+                      schedules.length > 0
+                        ? schedules
+                            .map(
+                              (s) => `${s.date} ${s.heure_debut}-${s.heure_fin}`
+                            )
+                            .join(", ")
+                        : "Non défini"
+                    }</div>
+                    <div class="salle-actions flex gap-3">
+                      <button class="action-btn edit-btn bg-[#1f3a73] text-white px-4 py-1.5 rounded text-sm btn-transition hover:bg-[#2a4a8f]" data-id="${
+                        reservation.id
+                      }" aria-label="Modifier le TP ${
+                  reservation.tp_nom || "inconnu"
+                }">Modifier</button>
+                      <button class="action-btn delete-btn bg-red-800 text-white px-4 py-1.5 rounded text-sm btn-transition hover:bg-red-900" data-id="${
+                        reservation.id
+                      }" aria-label="Supprimer le TP ${
+                  reservation.tp_nom || "inconnu"
+                }">Supprimer</button>
+                    </div>
+                  </div>
+                `;
+                tpGrid.appendChild(card);
+              });
+
+              document.querySelectorAll(".edit-btn").forEach((btn) => {
+                btn.addEventListener("click", (e) => {
+                  const id = e.target.dataset.id;
+                  editReservation(id);
+                });
+              });
+
+              document.querySelectorAll(".delete-btn").forEach((btn) => {
+                btn.addEventListener("click", (e) => {
+                  const id = e.target.dataset.id;
+                  deleteReservation(id);
+                });
+              });
+            } else {
+              console.error(
+                "Erreur lors de la récupération des TPs:",
+                data.message
+              );
+              if (data.message === "Utilisateur non connecté") {
+                window.location.href = "connexion.html";
+              } else {
+                alert(
+                  "Erreur lors de la récupération des TPs: " + data.message
+                );
+              }
+            }
+          });
+      }
+
+      // Supprimer une salle
+      function deleteSalle(id) {
+        if (!confirm("Voulez-vous vraiment supprimer cette salle ?")) return;
+
+        fetch("./scripts/delete_classroom.php", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${getUserId() || ""}`
+          },
+          body: JSON.stringify({
+            id: id.replace("salle_", ""),
+            user_id: getUserId()
+          })
+        })
+          .then((response) => {
+            if (!response.ok)
+              throw new Error(`HTTP error! status: ${response.status}`);
+            return response.json();
+          })
+          .then((data) => {
+            if (data.success) {
+              salles = salles.filter((s) => s.id !== id);
+              localStorage.setItem("salles", JSON.stringify(salles));
+              reservations = reservations.filter((r) => r.salle_id !== id);
+              localStorage.setItem(
+                "reservations",
+                JSON.stringify(reservations)
+              );
+              displaySalles();
+              displayReservations();
+              displayStats();
+              alert("Salle supprimée avec succès !");
+            } else {
+              alert(
+                "Erreur lors de la suppression: " +
+                  (data.message || "Erreur inconnue")
+              );
+            }
+          })
+          .catch((error) => {
+            console.error("Erreur:", error);
+            alert(
+              "Une erreur s’est produite lors de la suppression de la salle: " +
+                error.message
+            );
+          });
+      }
+
+      // Réserver une salle
+      function reserveSalle(id) {
+        const salle = salles.find((s) => s.id === id);
+        if (!salle) {
+          alert("Salle non trouvée.");
+          return;
+        }
+        document.getElementById("reserve-salle-id").value = id;
+        reserveModal.classList.remove("hidden");
+        reserveModal.setAttribute("aria-hidden", "false");
+        reserveModal
+          .querySelector(".modal-content")
+          .classList.remove("modal-fade-out");
+        reserveModal
+          .querySelector(".modal-content")
+          .classList.add("modal-fade-in");
+      }
+
+      // Modifier une réservation
+      function editReservation(id) {
+        window.location.href = `formulaire_tp.html?id=${id}`;
+      }
+
+      // Supprimer une réservation
+      function deleteReservation(id) {
+        if (!confirm("Voulez-vous vraiment supprimer ce TP ?")) return;
+
+        fetch("./scripts/delete_tp.php", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${getUserId() || ""}`
+          },
+          body: JSON.stringify({ id, user_id: getUserId() })
+        })
+          .then((response) => {
+            if (!response.ok)
+              throw new Error(`HTTP error! status: ${response.status}`);
+            return response.json();
+          })
+          .then((data) => {
+            if (data.success) {
+              reservations = reservations.filter((r) => r.id !== id);
+              localStorage.setItem(
+                "reservations",
+                JSON.stringify(reservations)
+              );
+              updateSalleDisponibilite();
+              displayReservations();
+              displaySalles();
+              displayStats();
+              alert("TP supprimé avec succès !");
+            } else {
+              alert("Erreur lors de la suppression: " + data.message);
+            }
+          })
+          .catch((error) => {
+            console.error("Erreur:", error);
+            alert("Une erreur s’est produite lors de la suppression du TP.");
+          });
+      }
+
+      // Mettre à jour la disponibilité des salles
+      function updateSalleDisponibilite() {
+        salles.forEach((salle) => {
+          salle.disponible = !isSalleOccupied(salle.id);
+        });
+        localStorage.setItem("salles", JSON.stringify(salles));
+      }
+
+      // Gestion des onglets
+      tabs.forEach((tab) => {
+        tab.addEventListener("click", () => {
+          tabs.forEach((t) => t.classList.remove("active"));
+          tab.classList.add("active");
+          if (tab.dataset.tab === "salles") {
+            sallesTab.classList.remove("hidden", "fade-out");
+            sallesTab.classList.add("fade-in");
+            sallesTab.setAttribute("aria-hidden", "false");
+            tpTab.classList.add("hidden");
+            tpTab.classList.remove("fade-in");
+            tpTab.classList.add("fade-out");
+            tpTab.setAttribute("aria-hidden", "true");
+            setTimeout(() => tpTab.classList.remove("fade-out"), 300);
+            window.location.hash = "classroom_manager?salles";
+            displaySalles();
+          } else if (tab.dataset.tab === "tp") {
+            sallesTab.classList.add("hidden");
+            sallesTab.classList.remove("fade-in");
+            sallesTab.classList.add("fade-out");
+            sallesTab.setAttribute("aria-hidden", "true");
+            tpTab.classList.remove("hidden", "fade-out");
+            tpTab.classList.add("fade-in");
+            tpTab.setAttribute("aria-hidden", "false");
+            setTimeout(() => sallesTab.classList.remove("fade-out"), 300);
+            window.location.hash = "classroom_manager?tp";
+            displayReservations();
+          }
+        });
+      });
+
+      // Gestion de la navigation
+      if (homeLink) {
+        homeLink.addEventListener("click", () => {
+          homeContent.classList.remove("hidden", "fade-out");
+          homeContent.classList.add("fade-in");
+          homeContent.setAttribute("aria-hidden", "false");
+          classroomContent.classList.add("hidden");
+          classroomContent.classList.remove("fade-in");
+          classroomContent.classList.add("fade-out");
+          classroomContent.setAttribute("aria-hidden", "true");
+          setTimeout(() => classroomContent.classList.remove("fade-out"), 300);
+          homeLink.classList.add("active");
+          classroomLink.classList.remove("active");
+        });
+      }
+
+      if (classroomLink) {
+        classroomLink.addEventListener("click", () => {
+          homeContent.classList.add("hidden");
+          homeContent.classList.remove("fade-in");
+          homeContent.classList.add("fade-out");
+          homeContent.setAttribute("aria-hidden", "true");
+          classroomContent.classList.remove("hidden", "fade-out");
+          classroomContent.classList.add("fade-in");
+          classroomContent.setAttribute("aria-hidden", "false");
+          setTimeout(() => homeContent.classList.remove("fade-out"), 300);
+          classroomLink.classList.add("active");
+          homeLink.classList.remove("active");
+          tabs.forEach((t) => t.classList.remove("active"));
+          const sallesTabButton = document.querySelector(
+            '.tab[data-tab="salles"]'
+          );
+          if (sallesTabButton) {
+            sallesTabButton.classList.add("active");
+            sallesTab.classList.remove("hidden", "fade-out");
+            sallesTab.classList.add("fade-in");
+            sallesTab.setAttribute("aria-hidden", "false");
+            tpTab.classList.add("hidden");
+            tpTab.classList.remove("fade-in");
+            tpTab.classList.add("fade-out");
+            tpTab.setAttribute("aria-hidden", "true");
+            setTimeout(() => tpTab.classList.remove("fade-out"), 300);
+            displaySalles();
+          }
+        });
+      }
+
+      // Gestion du bouton de connexion
+      if (loginBtn) {
+        loginBtn.addEventListener("click", () => {
+          window.location.href = "connexion.html";
+        });
+      }
+
+      // Gestion du bouton "Ajouter Salle"
+      if (addSalleBtn) {
+        addSalleBtn.addEventListener("click", () => {
+          window.location.href = "formulaire_classe.html";
+        });
+      }
+
+      // Gestion du bouton "Ajouter TP"
+      if (addTpBtn) {
+        addTpBtn.addEventListener("click", () => {
+          window.location.href = "formulaire_tp.html";
+        });
+      }
+
+      // Gestion du bouton "Annuler" du modal de modification
+      if (cancelEditBtn) {
+        cancelEditBtn.addEventListener("click", () => {
+          editModal
+            .querySelector(".modal-content")
+            .classList.remove("modal-fade-in");
+          editModal
+            .querySelector(".modal-content")
+            .classList.add("modal-fade-out");
+          setTimeout(() => {
+            editModal.classList.add("hidden");
+            editModal.setAttribute("aria-hidden", "true");
+            editModal
+              .querySelector(".modal-content")
+              .classList.remove("modal-fade-out");
+          }, 300);
+        });
+      }
+
+      // Gestion du bouton "Annuler" du modal de réservation
+      if (cancelReserveBtn) {
+        cancelReserveBtn.addEventListener("click", () => {
+          reserveModal
+            .querySelector(".modal-content")
+            .classList.remove("modal-fade-in");
+          reserveModal
+            .querySelector(".modal-content")
+            .classList.add("modal-fade-out");
+          setTimeout(() => {
+            reserveModal.classList.add("hidden");
+            reserveModal.setAttribute("aria-hidden", "true");
+            reserveModal
+              .querySelector(".modal-content")
+              .classList.remove("modal-fade-out");
+          }, 300);
+        });
+      }
+
+      // Gestion de la soumission du formulaire de modification
+      if (editForm) {
+        editForm.addEventListener("submit", (e) => {
+          e.preventDefault();
+
+          // Validation des champs
+          const capacite = parseInt(
+            document.getElementById("edit-capacite").value
+          );
+          const tables = parseInt(document.getElementById("edit-tables").value);
+          const chaises = parseInt(
+            document.getElementById("edit-chaises").value
+          );
+          const prises = parseInt(document.getElementById("edit-prises").value);
+          if (capacite < 1) {
+            alert("La capacité doit être d'au moins 1.");
+            return;
+          }
+          if (tables < 0 || chaises < 0 || prises < 0) {
+            alert(
+              "Les nombres de tables, chaises et prises doivent être positifs ou nuls."
+            );
+            return;
+          }
+
+          const salleData = {
+            id: document.getElementById("edit-id").value.replace("salle_", ""),
+            nom: document.getElementById("edit-nom").value,
+            batiment: document.getElementById("edit-batiment").value,
+            etage: document.getElementById("edit-etage").value || null,
+            capacite: capacite,
+            tables: tables,
+            chaises: chaises,
+            prises: prises,
+            etat: document.getElementById("edit-etat").value,
+            description:
+              document.getElementById("edit-description").value || null,
+            user_id: getUserId()
+          };
+
+          fetch("./scripts/update_classroom.php", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${getUserId() || ""}`
+            },
+            body: JSON.stringify(salleData)
+          })
+            .then((response) => {
+              if (!response.ok)
+                throw new Error(`HTTP error! status: ${response.status}`);
+              return response.json();
+            })
+            .then((data) => {
+              if (data.success) {
+                const salleIndex = salles.findIndex(
+                  (s) => s.id === salleData.id
+                );
+                if (salleIndex !== -1) {
+                  salles[salleIndex] = {
+                    ...salles[salleIndex],
+                    ...salleData,
+                    disponible: !isSalleOccupied(salleData.id)
+                  };
+                  localStorage.setItem("salles", JSON.stringify(salles));
+                  editModal
+                    .querySelector(".modal-content")
+                    .classList.remove("modal-fade-in");
+                  editModal
+                    .querySelector(".modal-content")
+                    .classList.add("modal-fade-out");
+                  setTimeout(() => {
+                    editModal.classList.add("hidden");
+                    editModal.setAttribute("aria-hidden", "true");
+                    editModal
+                      .querySelector(".modal-content")
+                      .classList.remove("modal-fade-out");
+                    reloadSalleData(); // Recharger après modification
+                    alert("Salle modifiée avec succès !");
+                  }, 300);
+                }
+              } else {
+                alert("Erreur lors de la modification: " + data.message);
+              }
+            })
+            .catch((error) => {
+              console.error("Erreur:", error);
+              alert(
+                "Une erreur s’est produite lors de la modification de la salle."
+              );
+            });
+        });
+      }
+
+      // Gestion de la soumission du formulaire de réservation
+      if (reserveForm) {
+        reserveForm.addEventListener("submit", (e) => {
+          e.preventDefault();
+
+          // Validation des champs
+          const date = document.getElementById("reserve-date").value;
+          const heureDebut = document.getElementById(
+            "reserve-heure-debut"
+          ).value;
+          const heureFin = document.getElementById("reserve-heure-fin").value;
+          if (
+            new Date(`${date}T${heureDebut}`) >= new Date(`${date}T${heureFin}`)
+          ) {
+            alert("L'heure de fin doit être postérieure à l'heure de début.");
+            return;
+          }
+          if (new Date(`${date}T${heureDebut}`) < new Date()) {
+            alert("La réservation ne peut pas être dans le passé.");
+            return;
+          }
+
+          const reservationData = {
+            salle_id: document
+              .getElementById("reserve-salle-id")
+              .value.replace("salle_", ""),
+            date: date,
+            heure_debut: heureDebut,
+            heure_fin: heureFin,
+            motif: document.getElementById("reserve-motif").value || null,
+            user_id: getUserId()
+          };
+
+          fetch("./scripts/reserve.php", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${getUserId() || ""}`
+            },
+            body: JSON.stringify(reservationData)
+          })
+            .then((response) => {
+              if (!response.ok)
+                throw new Error(`HTTP error! status: ${response.status}`);
+              return response.json();
+            })
+            .then((data) => {
+              if (data.success) {
+                reservations.push({
+                  ...reservationData,
+                  id: data.reservation_id,
+                  schedules: [
+                    {
+                      date: reservationData.date,
+                      heure_debut: reservationData.heure_debut,
+                      heure_fin: reservationData.heure_fin
+                    }
+                  ]
+                });
+                localStorage.setItem(
+                  "reservations",
+                  JSON.stringify(reservations)
+                );
+                reserveModal
+                  .querySelector(".modal-content")
+                  .classList.remove("modal-fade-in");
+                reserveModal
+                  .querySelector(".modal-content")
+                  .classList.add("modal-fade-out");
+                setTimeout(() => {
+                  reserveModal.classList.add("hidden");
+                  reserveModal.setAttribute("aria-hidden", "true");
+                  reserveModal
+                    .querySelector(".modal-content")
+                    .classList.remove("modal-fade-out");
+                  reloadSalleData(); // Recharger après réservation
+                  alert("Réservation effectuée avec succès !");
+                }, 300);
+              } else {
+                alert("Erreur lors de la réservation: " + data.message);
+              }
+            })
+            .catch((error) => {
+              console.error("Erreur:", error);
+              alert("Une erreur s’est produite lors de la réservation.");
+            });
+        });
+      }
+
+      // Gestion des changements dans le stockage local
+      window.addEventListener("storage", (e) => {
+        if (e.key === "salles") {
+          salles = JSON.parse(e.newValue) || [];
+          displaySalles();
+          displayStats();
+        }
+        if (e.key === "reservations") {
+          reservations = JSON.parse(e.newValue) || [];
+          displayReservations();
+          updateSalleDisponibilite();
+          displayStats();
+        }
+        if (e.key === "isLoggedIn" || e.key === "userData") {
+          initAuthUI();
+          if (localStorage.getItem("isLoggedIn") !== "true") {
+            window.location.href = "connexion.html";
+          }
+        }
+      });
+    </script>
+  </body>
+</html>

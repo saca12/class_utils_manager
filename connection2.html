@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Connexion</title>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: #3c424e;
+            padding: 20px;
+        }
+        h2 {
+            color: #80acfe;
+        }
+        .form-container {
+            background-color: rgba(31, 58, 115, 0.2);
+            padding: 30px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #80acfe;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        label {
+            display: block;
+            margin-top: 30px;
+            color: #eaedf3;
+        }
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-sizing: border-box;
+            outline: none;
+        }
+        input[type="submit"] {
+            margin-top: 15px;
+            padding: 10px 20px;
+            background-color: #eaedf3;
+            border: none;
+            color: #a25100;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        input[type="submit"]:hover {
+            background-color: #d0d3d9;
+        }
+        .link-container {
+            text-align: center;
+            margin-top: 20px;
+            color: #eaedf3;
+        }
+        a {
+            color: #80acfe;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2>Connexion</h2>
+        <form id="Se_connecter" action="#" method="post">
+            <label for="matricule_connection">Matricule:</label>
+            <input type="text" id="matricule_connection" name="matricule_connection" required>
+            
+            <label for="password">Mot de passe:</label>
+            <input type="password" id="password_connection" name="password" required>
+            
+            <input type="submit" value="Se connecter">
+        </form>
+        
+        <div class="link-container">
+            <p>Vous n'avez pas de compte? <a href="inscription.html">S'inscrire</a></p>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Caractéristiques Internes - Ordinateur</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .fade-in {
+        animation: fadeIn 0.5s ease-out;
+      }
+      .btn-transition {
+        transition: all 0.3s ease;
+      }
+      .btn-transition:hover {
+        transform: scale(1.05);
+      }
+      select {
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2380acfe'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 0.75rem center;
+        background-size: 1.5rem;
+        padding-right: 2.5rem;
+      }
+      select:focus {
+        box-shadow: 0 0 0 3px rgba(128, 172, 254, 0.3);
+      }
+    </style>
+  </head>
+  <body class="bg-[#3c424e] min-h-screen p-4 text-white font-sans">
+    <div
+      class="container max-w-4xl mx-auto bg-[#525b52] p-6 sm:p-8 rounded-lg shadow-xl border border-[#1f3a73] fade-in"
+    >
+      <h1
+        class="text-2xl sm:text-3xl font-bold text-[#80acfe] text-center mb-6 border-b-2 border-[#1f3a73] pb-2"
+      >
+        Caractéristiques Internes de l'Ordinateur
+      </h1>
+
+      <form id="computerForm" class="space-y-8">
+        <input type="hidden" id="classroom_id" name="classroom_id" value="" />
+        <div
+          id="error-message"
+          class="hidden bg-red-100 text-red-600 p-4 rounded-md border border-red-600 text-center text-sm"
+        ></div>
+
+        <div class="bg-[#1f3a73]/20 p-6 rounded-md border-l-4 border-[#80acfe]">
+          <h2 class="text-xl text-[#80acfe] mb-4">Détails de l'ordinateur</h2>
+          <div class="grid grid-cols-1 gap-4">
+            <div>
+              <label
+                for="marque"
+                class="block text-[#80acfe] font-semibold mb-2 text-sm sm:text-base after:content-['*'] after:text-red-600"
+                >Marque</label
+              >
+              <input
+                type="text"
+                id="marque"
+                name="marque"
+                required
+                class="w-full p-3 rounded-md bg-[#3c424e] text-white border border-[#1f3a73] focus:border-[#80acfe] focus:ring-2 focus:ring-[#80acfe] transition duration-200"
+                placeholder="Ex: Dell"
+              />
+            </div>
+            <div>
+              <label
+                for="modele"
+                class="block text-[#80acfe] font-semibold mb-2 text-sm sm:text-base after:content-['*'] after:text-red-600"
+                >Modèle</label
+              >
+              <input
+                type="text"
+                id="modele"
+                name="modele"
+                required
+                class="w-full p-3 rounded-md bg-[#3c424e] text-white border border-[#1f3a73] focus:border-[#80acfe] focus:ring-2 focus:ring-[#80acfe] transition duration-200"
+                placeholder="Ex: OptiPlex 7040"
+              />
+            </div>
+            <div>
+              <label
+                for="ram"
+                class="block text-[#80acfe] font-semibold mb-2 text-sm sm:text-base after:content-['*'] after:text-red-600"
+                >RAM (Go)</label
+              >
+              <select
+                id="ram"
+                name="ram"
+                required
+                class="w-full p-3 rounded-md bg-[#3c424e] text-white border border-[#1f3a73] focus:border-[#80acfe] focus:ring-2 focus:ring-[#80acfe] transition duration-200"
+              >
+                <option value="">Sélectionner la RAM</option>
+                <option value="4">4 Go</option>
+                <option value="8">8 Go</option>
+                <option value="16">16 Go</option>
+                <option value="32">32 Go</option>
+                <option value="64">64 Go</option>
+              </select>
+            </div>
+            <div>
+              <label
+                for="processeur"
+                class="block text-[#80acfe] font-semibold mb-2 text-sm sm:text-base after:content-['*'] after:text-red-600"
+                >Processeur</label
+              >
+              <input
+                type="text"
+                id="processeur"
+                name="processeur"
+                required
+                class="w-full p-3 rounded-md bg-[#3c424e] text-white border border-[#1f3a73] focus:border-[#80acfe] focus:ring-2 focus:ring-[#80acfe] transition duration-200"
+                placeholder="Ex: Intel i5-12400"
+              />
+            </div>
+            <div>
+              <label
+                for="disque"
+                class="block text-[#80acfe] font-semibold mb-2 text-sm sm:text-base after:content-['*'] after:text-red-600"
+                >Stockage (Go)</label
+              >
+              <input
+                type="number"
+                id="disque"
+                name="disque"
+                min="0"
+                required
+                class="w-full p-3 rounded-md bg-[#3c424e] text-white border border-[#1f3a73] focus:border-[#80acfe] focus:ring-2 focus:ring-[#80acfe] transition duration-200"
+                placeholder="Ex: 512"
+              />
+            </div>
+            <div>
+              <label
+                for="quantite"
+                class="block text-[#80acfe] font-semibold mb-2 text-sm sm:text-base after:content-['*'] after:text-red-600"
+                >Quantité</label
+              >
+              <input
+                type="number"
+                id="quantite"
+                name="quantite"
+                min="1"
+                required
+                class="w-full p-3 rounded-md bg-[#3c424e] text-white border border-[#1f3a73] focus:border-[#80acfe] focus:ring-2 focus:ring-[#80acfe] transition duration-200"
+                placeholder="Ex: 1"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap gap-4">
+          <a
+            href=""
+            id="nextStepBtn"
+            class="flex-1 bg-[#a25100] text-white p-3 rounded-md text-center text-sm sm:text-base btn-transition hover:bg-[#c26202]"
+          >
+            Passer aux caractéristiques externes
+          </a>
+        </div>
+      </form>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const urlParams = new URLSearchParams(window.location.search);
+        const classroomId = urlParams.get("classroom_id");
+        const errorDiv = document.getElementById("error-message");
+
+        if (!classroomId) {
+          errorDiv.textContent = "ID de salle manquant.";
+          errorDiv.classList.remove("hidden");
+          return;
+        }
+        document.getElementById("classroom_id").value = classroomId;
+
+        const nextStepBtn = document.getElementById("nextStepBtn");
+        const form = document.getElementById("computerForm");
+
+        nextStepBtn.addEventListener("click", (e) => {
+          e.preventDefault();
+          if (
+            !document.getElementById("marque").value ||
+            !document.getElementById("modele").value ||
+            !document.getElementById("ram").value ||
+            !document.getElementById("processeur").value ||
+            !document.getElementById("disque").value ||
+            !document.getElementById("quantite").value
+          ) {
+            errorDiv.textContent =
+              "Veuillez remplir tous les champs obligatoires.";
+            errorDiv.classList.remove("hidden");
+            return;
+          }
+
+          const computerData = {
+            marque: document.getElementById("marque").value,
+            modele: document.getElementById("modele").value,
+            ram: document.getElementById("ram").value,
+            processeur: document.getElementById("processeur").value,
+            disque: document.getElementById("disque").value,
+            quantite: document.getElementById("quantite").value
+          };
+          localStorage.setItem("computerData", JSON.stringify(computerData));
+
+          window.location.href = `carac_externe.html?classroom_id=${classroomId}`;
+        });
+      });
+    </script>
+  </body>
+</html>

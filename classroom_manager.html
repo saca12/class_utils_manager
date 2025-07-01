@@ -1,0 +1,84 @@
+<!--<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>gestion</title>
+    <link rel="stylesheet" href="../styles/classroom.css" />
+    <link rel="stylesheet" href="../styles/icons.css" />
+  </head>
+  <body>
+    <main>
+      <div class="container">
+        <h1 class="title">Gestion des Salles de TP</h1>
+        <section class="grid-container">
+          <div class="content">
+            <h2 class="nomSalle">Salle A</h2>
+          </div>
+          <div class="content"><h2 class="nomSalle">Salle B</h2></div>
+          <div class="content"><h2 class="nomSalle">Salle C</h2></div>
+          <div class="content"><h2 class="nomSalle">Salle D</h2></div>
+        </section>
+      </div>
+      <div class="add">
+        <div class="button icon-cross"><button></button></div>
+        <h3>Ajouter Salle</h3>
+      </div>
+    </main>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const form = document.getElementById("salleForm");
+        const errorDiv = document.createElement("div");
+        errorDiv.id = "error-message";
+        errorDiv.style.color = "red";
+        errorDiv.style.marginBottom = "10px";
+        form.parentNode.insertBefore(errorDiv, form);
+
+        // Afficher l'erreur existante si présente
+        const errorMessage = sessionStorage.getItem("error_message");
+        if (errorMessage) {
+          errorDiv.textContent = errorMessage;
+          sessionStorage.removeItem("error_message");
+        }
+
+        form.addEventListener("submit", function (e) {
+          e.preventDefault();
+          errorDiv.textContent = ""; // Effacer l'erreur précédente
+
+          fetch(form.action, {
+            method: "POST",
+            body: new FormData(form)
+          })
+            .then((response) => {
+              if (response.redirected) {
+                window.location.href = response.url;
+              }
+              return response.text();
+            })
+            .then(() => {
+              const newErrorMessage = sessionStorage.getItem("error_message");
+              if (newErrorMessage) {
+                errorDiv.textContent = newErrorMessage;
+                sessionStorage.removeItem("error_message");
+              } else {
+                window.location.href = "index.html";
+              }
+            })
+            .catch((error) => {
+              errorDiv.textContent =
+                "Une erreur s'est produite : " + error.message;
+            });
+        });
+      });
+
+      // Stocker le message d'erreur dans sessionStorage au chargement de la page
+      if (window.history.replaceState) {
+        window.history.replaceState(
+          null,
+          document.title,
+          window.location.pathname
+        );
+      }
+    </script>
+  </body>
+</html>

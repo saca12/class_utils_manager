@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Modifier un Travaux Pratique</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #3c424e;
+        color: #ffffff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .form-container {
+        background-color: #525b52;
+        padding: 30px;
+        border-radius: 12px;
+        width: 100%;
+        max-width: 600px;
+        border: 1px solid #1f3a73;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+      }
+
+      .form-title {
+        color: #80acfe;
+        font-size: 28px;
+        font-weight: bold;
+        text-align: center;
+        margin-bottom: 25px;
+        border-bottom: 2px solid #1f3a73;
+        padding-bottom: 10px;
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      .form-group label {
+        display: block;
+        color: #80acfe;
+        font-weight: 500;
+        margin-bottom: 8px;
+      }
+
+      .form-group input,
+      .form-group select,
+      .form-group textarea {
+        width: 100%;
+        padding: 12px;
+        border-radius: 8px;
+        border: 1px solid #1f3a73;
+        background-color: #3c424e;
+        color: #ffffff;
+        font-size: 16px;
+        transition: border-color 0.3s ease;
+      }
+
+      .form-group input:focus,
+      .form-group select:focus,
+      .form-group textarea:focus {
+        border-color: #80acfe;
+        outline: none;
+      }
+
+      .form-group textarea {
+        min-height: 120px;
+        resize: vertical;
+      }
+
+      .schedule-item {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 10px;
+        align-items: center;
+      }
+
+      .remove-schedule {
+        font-size: 18px;
+        color: #dc3545;
+        cursor: pointer;
+        padding: 5px;
+        transition: color 0.3s ease;
+      }
+
+      .remove-schedule:hover {
+        color: #ff4d4d;
+      }
+
+      .schedule-item input[type="date"],
+      .schedule-item input[type="time"] {
+        width: 45%;
+      }
+
+      .add-schedule-btn {
+        padding: 8px 15px;
+        background-color: #a25100;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+      .add-schedule-btn:hover {
+        background-color: #c26202;
+      }
+
+      .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 15px;
+        margin-top: 20px;
+      }
+
+      .submit-btn,
+      .cancel-btn {
+        padding: 12px 25px;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+        font-weight: 600;
+        transition: transform 0.3s ease, background-color 0.3s ease;
+      }
+
+      .submit-btn {
+        background-color: #a25100;
+        color: white;
+      }
+
+      .submit-btn:hover {
+        background-color: #c26202;
+        transform: translateY(-2px);
+      }
+
+      .cancel-btn {
+        background-color: #6c757d;
+        color: white;
+      }
+
+      .cancel-btn:hover {
+        background-color: #5a6268;
+        transform: translateY(-2px);
+      }
+
+      @media (max-width: 768px) {
+        .form-container {
+          padding: 20px;
+        }
+
+        .form-title {
+          font-size: 24px;
+        }
+
+        .form-actions {
+          flex-direction: column;
+          gap: 10px;
+        }
+
+        .submit-btn,
+        .cancel-btn {
+          width: 100%;
+        }
+
+        .schedule-item {
+          flex-direction: column;
+          gap: 10px;
+        }
+
+        .schedule-item input[type="date"],
+        .schedule-item input[type="time"] {
+          width: 100%;
+        }
+
+        .remove-schedule {
+          align-self: flex-start;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="form-container">
+      <h1 class="form-title">Modifier un Travaux Pratique</h1>
+      <form id="tpForm">
+        <div class="form-group">
+          <label for="tp-nom">Nom du TP</label>
+          <input type="text" id="tp-nom" name="tp-nom" required />
+        </div>
+        <div class="form-group">
+          <label>Schedules</label>
+          <div id="scheduleContainer"></div>
+          <button type="button" class="add-schedule-btn" id="addScheduleBtn">
+            Ajouter un jour
+          </button>
+        </div>
+        <div class="form-group">
+          <label for="tp-matiere">Matière</label>
+          <input type="text" id="tp-matiere" name="tp-matiere" required />
+        </div>
+        <div class="form-group">
+          <label for="tp-salle">Salle</label>
+          <select id="tp-salle" name="tp-salle" required>
+            <option value="">Sélectionner une salle</option>
+            <!-- Options générées dynamiquement -->
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="tp-logiciels">Logiciels requis</label>
+          <textarea
+            id="tp-logiciels"
+            name="tp-logiciels"
+            placeholder="Liste des logiciels (ex: Python, VS Code, etc.)"
+          ></textarea>
+        </div>
+        <div class="form-actions">
+          <button
+            type="button"
+            class="cancel-btn"
+            onclick="window.location.href='index.html'"
+          >
+            Annuler
+          </button>
+          <button type="submit" class="submit-btn">Enregistrer</button>
+        </div>
+      </form>
+    </div>
+
+    <script>
+      const salles = JSON.parse(localStorage.getItem("salles")) || [];
+      const salleSelect = document.getElementById("tp-salle");
+      const scheduleContainer = document.getElementById("scheduleContainer");
+      const addScheduleBtn = document.getElementById("addScheduleBtn");
+      const tpForm = document.getElementById("tpForm");
+
+      // Remplir le select des salles
+      salleSelect.innerHTML =
+        '<option value="">Sélectionner une salle</option>';
+      salles.forEach((salle) => {
+        const option = document.createElement("option");
+        option.value = salle.id;
+        option.textContent = salle.nom;
+        salleSelect.appendChild(option);
+      });
+
+      // Récupérer l'ID du TP depuis l'URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const tpId = urlParams.get("id");
+
+      // Charger les données du TP
+      fetch(`./scripts/get_tp.php?id=${tpId}`)
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.success) {
+            document.getElementById("tp-nom").value = data.tp.tp_nom;
+            document.getElementById("tp-matiere").value = data.tp.matiere;
+            document.getElementById("tp-salle").value =
+              "salle_" + data.tp.salle_id;
+            document.getElementById("tp-logiciels").value =
+              data.tp.logiciels || "";
+            data.schedules.forEach((schedule) => {
+              const scheduleItem = document.createElement("div");
+              scheduleItem.className = "schedule-item";
+              scheduleItem.innerHTML = `
+                            <span class="remove-schedule">×</span>
+                            <input type="date" class="schedule-date" value="${schedule.date}" required />
+                            <input type="time" class="schedule-start" value="${schedule.heure_debut}" required />
+                            <input type="time" class="schedule-end" value="${schedule.heure_fin}" required />
+                        `;
+              scheduleContainer.appendChild(scheduleItem);
+            });
+            updateRemoveButtons();
+          } else {
+            alert("Erreur : " + data.message);
+          }
+        });
+
+      // Gestion des schedules
+      function updateRemoveButtons() {
+        const removeButtons =
+          scheduleContainer.querySelectorAll(".remove-schedule");
+        if (removeButtons.length <= 1) {
+          removeButtons.forEach((btn) => (btn.style.display = "none"));
+        } else {
+          removeButtons.forEach((btn) => (btn.style.display = "inline"));
+        }
+      }
+
+      addScheduleBtn.addEventListener("click", () => {
+        const scheduleItem = document.createElement("div");
+        scheduleItem.className = "schedule-item";
+        scheduleItem.innerHTML = `
+                <span class="remove-schedule">×</span>
+                <input type="date" class="schedule-date" required />
+                <input type="time" class="schedule-start" required />
+                <input type="time" class="schedule-end" required />
+            `;
+        scheduleContainer.appendChild(scheduleItem);
+        updateRemoveButtons();
+
+        scheduleItem
+          .querySelector(".remove-schedule")
+          .addEventListener("click", () => {
+            if (
+              scheduleContainer.querySelectorAll(".schedule-item").length > 1
+            ) {
+              scheduleItem.remove();
+              updateRemoveButtons();
+            }
+          });
+      });
+
+      // Gestion du formulaire
+      tpForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        const scheduleItems =
+          scheduleContainer.querySelectorAll(".schedule-item");
+        const schedules = Array.from(scheduleItems).map((item) => ({
+          date: item.querySelector(".schedule-date").value,
+          heure_debut: item.querySelector(".schedule-start").value,
+          heure_fin: item.querySelector(".schedule-end").value
+        }));
+
+        const tpData = {
+          id: tpId,
+          tp_nom: document.getElementById("tp-nom").value,
+          matiere: document.getElementById("tp-matiere").value,
+          salle_id: document.getElementById("tp-salle").value,
+          logiciels: document.getElementById("tp-logiciels").value,
+          schedules: schedules
+        };
+
+        fetch("./scripts/update_tp.php", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(tpData)
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success) {
+              let reservations =
+                JSON.parse(localStorage.getItem("reservations")) || [];
+              const index = reservations.findIndex((r) => r.id == tpId);
+              if (index !== -1) {
+                reservations[index] = {
+                  id: tpId,
+                  tp_nom: tpData.tp_nom,
+                  matiere: tpData.matiere,
+                  salles: [{ id: tpData.salle_id }],
+                  logiciels: tpData.logiciels,
+                  schedules: tpData.schedules
+                };
+                localStorage.setItem(
+                  "reservations",
+                  JSON.stringify(reservations)
+                );
+              }
+              alert("TP modifié avec succès !");
+              window.location.href = "index.html";
+            } else {
+              alert("Erreur : " + data.message);
+            }
+          })
+          .catch((error) => {
+            console.error("Erreur:", error);
+            alert("Une erreur s’est produite lors de la modification.");
+          });
+      });
+
+      updateRemoveButtons();
+    </script>
+  </body>
+</html>

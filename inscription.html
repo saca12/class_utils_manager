@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Inscription - ESI Class Utils Manager</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .fade-in {
+        animation: fadeIn 0.5s ease-out;
+      }
+      .btn-transition {
+        transition: all 0.3s ease;
+      }
+      .btn-transition:hover {
+        transform: scale(1.05);
+      }
+    </style>
+  </head>
+  <body class="bg-[#3c424e] min-h-screen flex items-center justify-center p-4">
+    <div
+      class="bg-[#525b52] p-6 sm:p-8 rounded-lg shadow-xl border border-[#1f3a73] w-full max-w-md fade-in"
+    >
+      <h1
+        class="text-2xl sm:text-3xl font-bold text-[#80acfe] text-center mb-6"
+      >
+        Inscription
+      </h1>
+      <form id="registerForm" class="space-y-6">
+        <div>
+          <label
+            for="nom"
+            class="block text-[#80acfe] font-semibold mb-2 text-sm sm:text-base"
+            >Nom</label
+          >
+          <input
+            type="text"
+            id="nom"
+            name="nom"
+            required
+            maxlength="50"
+            class="w-full p-3 rounded-md bg-[#3c424e] text-white border border-[#1f3a73] focus:border-[#80acfe] focus:ring-2 focus:ring-[#80acfe] transition duration-200"
+          />
+        </div>
+        <div>
+          <label
+            for="prenom"
+            class="block text-[#80acfe] font-semibold mb-2 text-sm sm:text-base"
+            >Prénom</label
+          >
+          <input
+            type="text"
+            id="prenom"
+            name="prenom"
+            required
+            maxlength="50"
+            class="w-full p-3 rounded-md bg-[#3c424e] text-white border border-[#1f3a73] focus:border-[#80acfe] focus:ring-2 focus:ring-[#80acfe] transition duration-200"
+          />
+        </div>
+        <div>
+          <label
+            for="matricule"
+            class="block text-[#80acfe] font-semibold mb-2 text-sm sm:text-base"
+            >Matricule</label
+          >
+          <input
+            type="text"
+            id="matricule"
+            name="matricule"
+            required
+            maxlength="20"
+            class="w-full p-3 rounded-md bg-[#3c424e] text-white border border-[#1f3a73] focus:border-[#80acfe] focus:ring-2 focus:ring-[#80acfe] transition duration-200"
+          />
+        </div>
+        <div>
+          <label
+            for="email"
+            class="block text-[#80acfe] font-semibold mb-2 text-sm sm:text-base"
+            >Email</label
+          >
+          <input
+            type="email"
+            id="email"
+            name="email"
+            required
+            maxlength="100"
+            class="w-full p-3 rounded-md bg-[#3c424e] text-white border border-[#1f3a73] focus:border-[#80acfe] focus:ring-2 focus:ring-[#80acfe] transition duration-200"
+          />
+        </div>
+        <div>
+          <label
+            for="password"
+            class="block text-[#80acfe] font-semibold mb-2 text-sm sm:text-base"
+            >Mot de passe</label
+          >
+          <input
+            type="password"
+            id="password"
+            name="password"
+            required
+            minlength="8"
+            maxlength="50"
+            class="w-full p-3 rounded-md bg-[#3c424e] text-white border border-[#1f3a73] focus:border-[#80acfe] focus:ring-2 focus:ring-[#80acfe] transition duration-200"
+          />
+        </div>
+        <div>
+          <label
+            for="conf_password"
+            class="block text-[#80acfe] font-semibold mb-2 text-sm sm:text-base"
+            >Confirmer mot de passe</label
+          >
+          <input
+            type="password"
+            id="conf_password"
+            name="conf_password"
+            required
+            minlength="8"
+            maxlength="50"
+            class="w-full p-3 rounded-md bg-[#3c424e] text-white border border-[#1f3a73] focus:border-[#80acfe] focus:ring-2 focus:ring-[#80acfe] transition duration-200"
+          />
+        </div>
+        <button
+          type="submit"
+          class="w-full bg-[#a25100] text-white p-3 rounded-md font-semibold text-sm sm:text-base btn-transition hover:bg-[#c26202]"
+        >
+          S'inscrire
+        </button>
+        <p
+          class="error-message hidden text-[#dc3545] text-center text-sm"
+          id="errorMessage"
+        ></p>
+        <div class="text-center">
+          <p class="text-[#80acfe] text-sm">
+            Vous avez déjà un compte ?
+            <a
+              href="connexion.html"
+              class="hover:underline transition duration-200"
+              >Se connecter</a
+            >
+          </p>
+        </div>
+      </form>
+    </div>
+
+    <script>
+      // Générer un token CSRF
+      function generateCsrfToken() {
+        return btoa(Math.random().toString(36).substr(2, 9)); // Token simple (à améliorer pour production)
+      }
+
+      // Stocker le token dans la session (simulé avec localStorage ici)
+      let csrfToken = localStorage.getItem("csrfToken");
+      if (!csrfToken) {
+        csrfToken = generateCsrfToken();
+        localStorage.setItem("csrfToken", csrfToken);
+      }
+
+      document
+        .getElementById("registerForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const nom = document.getElementById("nom").value.trim();
+          const prenom = document.getElementById("prenom").value.trim();
+          const matricule = document.getElementById("matricule").value.trim();
+          const email = document.getElementById("email").value.trim();
+          const password = document.getElementById("password").value;
+          const confPassword = document.getElementById("conf_password").value;
+          const errorMessage = document.getElementById("errorMessage");
+
+          // Validation côté client
+          if (password !== confPassword) {
+            errorMessage.textContent =
+              "Les mots de passe ne correspondent pas.";
+            errorMessage.classList.remove("hidden");
+            return;
+          }
+
+          errorMessage.classList.add("hidden"); // Réinitialiser le message d'erreur
+
+          try {
+            const response = await fetch("./scripts/register.php", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-Token": csrfToken
+              },
+              body: JSON.stringify({
+                nom,
+                prenom,
+                matricule,
+                email,
+                password,
+                conf_password: confPassword
+              })
+            });
+            const data = await response.json();
+
+            if (data.success) {
+              window.location.href = "connexion.html";
+            } else {
+              errorMessage.textContent =
+                data.message || "Erreur lors de l'inscription";
+              errorMessage.classList.remove("hidden");
+            }
+          } catch (error) {
+            errorMessage.textContent =
+              "Une erreur s'est produite. Veuillez réessayer.";
+            errorMessage.classList.remove("hidden");
+            console.error("Erreur:", error);
+          }
+        });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tableau de Bord - Salles Machines ESI</title>
+    <script src="./pages/chart.js-4.5.0/package/dist/chart.umd.min.js"></script>
+    <script src="./scripts/chartjs-plugin-datalabels.min.js"></script>
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #3c424e;
+        margin: 0;
+        padding: 20px;
+        color: #ffffff;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        background: #3c424e;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+        border: 1px solid #1f3a73;
+      }
+
+      h1 {
+        text-align: center;
+        color: #80acfe;
+        margin-bottom: 30px;
+        border-bottom: 2px solid #1f3a73;
+        padding-bottom: 10px;
+      }
+
+      .filters {
+        display: flex;
+        gap: 20px;
+        margin-bottom: 30px;
+        flex-wrap: wrap;
+        background-color: rgba(36, 55, 112, 0.2);
+        padding: 20px;
+        border-radius: 8px;
+      }
+
+      .filter-group {
+        flex: 1;
+        min-width: 200px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 8px;
+        color: #efe9e9;
+        font-weight: 600;
+      }
+
+      select,
+      input {
+        width: 100%;
+        padding: 10px;
+        background-color: #efe9e9;
+        border: 1px solid #1f3a73;
+        border-radius: 6px;
+        font-size: 16px;
+        color: #333;
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+      }
+
+      .stat-card {
+        background-color: rgba(30, 40, 61, 0.3);
+        padding: 15px;
+        border-radius: 8px;
+        text-align: center;
+        border-left: 4px solid #80acfe;
+      }
+
+      .stat-value {
+        font-size: 28px;
+        font-weight: bold;
+        color: #80acfe;
+        margin: 10px 0;
+      }
+
+      .stat-label {
+        color: #efe9e9;
+        font-size: 14px;
+      }
+
+      .charts-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(550px, 1fr));
+        gap: 30px;
+        margin-top: 20px;
+        min-height: 400px;
+      }
+
+      .chart-card {
+        background-color: rgba(31, 58, 115, 0.2);
+        padding: 20px;
+        border-radius: 8px;
+        border-left: 4px solid #80acfe;
+      }
+
+      .chart-title {
+        color: #80acfe;
+        margin-top: 0;
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      .chart-wrapper {
+        position: relative;
+        height: 350px;
+        width: 100%;
+      }
+
+      button {
+        background-color: #a25100;
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        font-size: 16px;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        margin-top: 10px;
+      }
+
+      button:hover {
+        background-color: #c26202;
+      }
+
+      .no-data {
+        text-align: center;
+        padding: 40px;
+        color: #80acfe;
+        font-size: 18px;
+      }
+
+      .room-selector {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+      }
+
+      .room-btn {
+        padding: 8px 16px;
+        background: rgba(31, 58, 115, 0.3);
+        border: 1px solid #1f3a73;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: all 0.3s;
+        color: #efe9e9;
+      }
+
+      .room-btn.active {
+        background-color: #a25100;
+        border-color: #a25100;
+      }
+
+      .legend {
+        margin-top: 10px;
+        font-size: 14px;
+      }
+
+      .back-button {
+        background-color: #a25100;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        font-size: 16px;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        margin-top: 20px;
+        display: inline-block;
+      }
+
+      .back-button:hover {
+        background-color: #c26202;
+      }
+
+      @media (max-width: 768px) {
+        .charts-container {
+          grid-template-columns: 1fr;
+        }
+
+        .container {
+          padding: 15px;
+        }
+
+        .chart-wrapper {
+          height: 300px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Tableau de Bord des Salles Machines</h1>
+
+      <div class="filters">
+        <div class="filter-group">
+          <label for="periode">Période</label>
+          <select id="periode">
+            <option value="semaine">Cette semaine</option>
+            <option value="mois">Ce mois</option>
+            <option value="trimestre">Ce trimestre</option>
+            <option value="annee">Cette année</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label for="typeActivite">Type d'activité</label>
+          <select id="typeActivite">
+            <option value="all">Toutes activités</option>
+            <option value="TP">TP</option>
+            <option value="cours">Cours</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <button id="applyFilters">Actualiser</button>
+        </div>
+      </div>
+
+      <div id="noData" class="no-data" style="display: none">
+        Aucune donnée disponible. Veuillez enregistrer des réservations.
+      </div>
+
+      <div id="dashboardContent">
+        <div class="room-selector" id="roomSelector">
+          <!-- Généré dynamiquement -->
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-label">Taux d'occupation</div>
+            <div class="stat-value" id="occupationRate">0%</div>
+            <div class="stat-label">sur la période</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-label">Heures utilisées</div>
+            <div class="stat-value" id="hoursUsed">0h</div>
+            <div class="stat-label">dont TP: <span id="tpHours">0h</span></div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-label">Salle la plus utilisée</div>
+            <div class="stat-value" id="mostUsedRoom">-</div>
+            <div class="stat-label">
+              <span id="mostUsedHours">0h</span> d'utilisation
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-label">Utilisation moyenne PC</div>
+            <div class="stat-value" id="pcUsage">0%</div>
+            <div class="stat-label">par poste</div>
+          </div>
+        </div>
+
+        <div class="charts-container">
+          <div class="chart-card">
+            <h2 class="chart-title">Occupation par jour</h2>
+            <div class="chart-wrapper">
+              <canvas id="dailyChart"></canvas>
+            </div>
+          </div>
+
+          <div class="chart-card">
+            <h2 class="chart-title">Répartition des heures par salle</h2>
+            <div class="chart-wrapper">
+              <canvas id="roomHoursChart"></canvas>
+            </div>
+          </div>
+
+          <div class="chart-card">
+            <h2 class="chart-title">Comparaison des salles</h2>
+            <div class="chart-wrapper">
+              <canvas id="comparisonChart"></canvas>
+            </div>
+          </div>
+
+          <div class="chart-card">
+            <h2 class="chart-title">Évolution du matériel</h2>
+            <div class="chart-wrapper">
+              <canvas id="trendChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="legend" class="legend"></div>
+      <button class="back-button" onclick="window.history.back()">
+        Retour
+      </button>
+    </div>
+
+    <script>
+      // Couleurs conformes à la charte
+      const chartColors = {
+        primary: "rgba(128, 172, 254, 0.7)",
+        secondary: "rgba(162, 81, 0, 0.7)",
+        success: "rgba(46, 204, 113, 0.7)",
+        purple: "rgba(155, 89, 182, 0.7)",
+        yellow: "rgba(241, 196, 15, 0.7)",
+        border: "rgba(128, 172, 254, 1)"
+      };
+
+      const roomColors = [
+        "#FF6B6B",
+        "#4ECDC4",
+        "#45B7D1",
+        "#96CEB4",
+        "#FFEEAD",
+        "#D4A5A5",
+        "#9B59B6"
+      ];
+
+      // Fonctions de rendu des graphiques
+      function renderDailyChart(data) {
+        const ctx = document.getElementById("dailyChart")?.getContext("2d");
+        if (!ctx) {
+          console.error("Canvas 'dailyChart' non trouvé");
+          return;
+        }
+
+        if (
+          window.dailyChart &&
+          typeof window.dailyChart.destroy === "function"
+        ) {
+          window.dailyChart.destroy();
+          console.log("Ancien graphique détruit");
+        }
+
+        const parent = ctx.canvas.parentElement;
+        if (parent) {
+          parent.innerHTML = '<canvas id="dailyChart"></canvas>';
+        }
+        const newCtx = document.getElementById("dailyChart")?.getContext("2d");
+        if (!newCtx) {
+          console.error("Impossible de recréer le canvas");
+          return;
+        }
+
+        console.log(
+          "Données brutes pour dailyChart:",
+          JSON.stringify(data, null, 2)
+        );
+        if (!data || !Array.isArray(data) || data.length === 0) {
+          console.warn("Aucune donnée valide pour dailyChart:", data);
+          parent.innerHTML =
+            "<p class='no-data'>Aucune donnée disponible pour ce graphique.</p>";
+          return;
+        }
+
+        const days = data[0]?.days || [];
+        if (days.length === 0) {
+          console.warn("Aucun jour défini dans dailyChart:", data);
+          parent.innerHTML =
+            "<p class='no-data'>Aucune donnée disponible pour ce graphique.</p>";
+          return;
+        }
+
+        const datasets = data.map((item, index) => {
+          const hoursData =
+            item.hours?.map((hourObj) => hourObj.hours || 0) ||
+            Array(days.length).fill(0);
+          if (hoursData.length !== days.length) {
+            console.warn(
+              `Mauvais alignement pour ${item.room}: attendu ${days.length}, reçu ${hoursData.length}`
+            );
+            return {
+              label: item.room || `Salle ${index + 1}`,
+              data: Array(days.length).fill(0),
+              backgroundColor:
+                roomColors[index % roomColors.length] || "#000000",
+              borderColor: chartColors.border || "#FFFFFF",
+              borderWidth: 1
+            };
+          }
+          console.log(`Dataset pour ${item.room}:`, hoursData);
+          return {
+            label: item.room || `Salle ${index + 1}`,
+            data: hoursData,
+            backgroundColor: roomColors[index % roomColors.length] || "#000000",
+            borderColor: chartColors.border || "#FFFFFF",
+            borderWidth: 1
+          };
+        });
+
+        console.log(
+          "Datasets finaux pour dailyChart:",
+          JSON.stringify(datasets, null, 2)
+        );
+
+        window.dailyChart = new Chart(newCtx, {
+          type: "bar",
+          data: {
+            labels: days,
+            datasets: datasets
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: {
+                beginAtZero: true,
+                title: { display: true, text: "Heures" },
+                grid: { color: "rgba(255, 255, 255, 0.1)" },
+                ticks: { color: "#efe9e9" }
+              },
+              x: {
+                grid: { color: "rgba(255, 255, 255, 0.1)" },
+                ticks: { color: "#efe9e9" }
+              }
+            },
+            plugins: {
+              legend: {
+                display: true,
+                position: "top",
+                labels: {
+                  color: "#efe9e9",
+                  generateLabels: (chart) =>
+                    chart.data.datasets.map((dataset, i) => ({
+                      text: dataset.label,
+                      fillStyle: dataset.backgroundColor,
+                      hidden: false,
+                      lineWidth: 1
+                    }))
+                },
+                onClick: (e, legendItem, legend) => {
+                  const index = legendItem.datasetIndex;
+                  const ci = legend.chart;
+                  ci.getDatasetMeta(index).hidden =
+                    !ci.getDatasetMeta(index).hidden;
+                  ci.update();
+                  console.log(
+                    `Visibilité de ${legendItem.text} changée à:`,
+                    !ci.getDatasetMeta(index).hidden
+                  );
+                }
+              }
+            }
+          }
+        });
+
+        console.log("Graphique créé avec", datasets.length, "datasets");
+      }
+      function renderRoomHoursChart(data) {
+        const ctx = document.getElementById("roomHoursChart")?.getContext("2d");
+        if (!ctx) {
+          console.error("Canvas 'roomHoursChart' non trouvé");
+          return;
+        }
+        if (
+          window.roomHoursChart &&
+          typeof window.roomHoursChart.destroy === "function"
+        ) {
+          window.roomHoursChart.destroy();
+        }
+
+        if (!data || !Array.isArray(data.labels) || data.labels.length === 0) {
+          console.warn("Aucune donnée valide pour roomHoursChart:", data);
+          ctx.canvas.parentElement.innerHTML =
+            "<p class='no-data'>Aucune donnée disponible pour ce graphique.</p>";
+          return;
+        }
+
+        window.roomHoursChart = new Chart(ctx, {
+          type: "pie",
+          data: {
+            labels: data.labels,
+            datasets: [
+              {
+                data: data.data,
+                backgroundColor: roomColors.slice(0, data.labels.length),
+                borderWidth: 1
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { position: "right", labels: { color: "#efe9e9" } },
+              tooltip: {
+                callbacks: {
+                  label: (context) => `${context.label}: ${context.raw}h`
+                }
+              },
+              datalabels: { color: "#ffffff" }
+            }
+          },
+          plugins: [ChartDataLabels]
+        });
+      }
+
+      function renderComparisonChart(data) {
+        const ctx = document
+          .getElementById("comparisonChart")
+          ?.getContext("2d");
+        if (!ctx) {
+          console.error("Canvas 'comparisonChart' non trouvé");
+          return;
+        }
+        if (
+          window.comparisonChart &&
+          typeof window.comparisonChart.destroy === "function"
+        ) {
+          window.comparisonChart.destroy();
+        }
+
+        if (!data || !Array.isArray(data) || data.length === 0) {
+          console.warn("Aucune donnée valide pour comparisonChart:", data);
+          ctx.canvas.parentElement.innerHTML =
+            "<p class='no-data'>Aucune donnée disponible pour ce graphique.</p>";
+          return;
+        }
+
+        window.comparisonChart = new Chart(ctx, {
+          type: "bar",
+          data: {
+            labels: data.map((item) => item.nom),
+            datasets: [
+              {
+                label: "Heures d'utilisation",
+                data: data.map((item) => item.hours),
+                backgroundColor: roomColors.slice(0, data.length),
+                borderColor: chartColors.border,
+                borderWidth: 1
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: {
+                beginAtZero: true,
+                title: { display: true, text: "Heures" },
+                grid: { color: "rgba(255, 255, 255, 0.1)" },
+                ticks: { color: "#efe9e9" }
+              },
+              x: {
+                grid: { color: "rgba(255, 255, 255, 0.1)" },
+                ticks: { color: "#efe9e9" }
+              }
+            },
+            plugins: {
+              legend: { labels: { color: "#efe9e9" } }
+            }
+          }
+        });
+      }
+
+      function renderTrendChart(data) {
+        const ctx = document.getElementById("trendChart")?.getContext("2d");
+        if (!ctx) {
+          console.error("Canvas 'trendChart' non trouvé");
+          return;
+        }
+        if (
+          window.trendChart &&
+          typeof window.trendChart.destroy === "function"
+        ) {
+          window.trendChart.destroy();
+        }
+
+        if (!data || !Array.isArray(data) || data.length === 0) {
+          console.warn("Aucune donnée valide pour trendChart:", data);
+          ctx.canvas.parentElement.innerHTML =
+            "<p class='no-data'>Aucune donnée disponible pour ce graphique.</p>";
+          return;
+        }
+
+        const datasets = Object.keys(
+          data[0]?.rooms?.reduce(
+            (acc, room) => ({ ...acc, [room.room]: [] }),
+            {}
+          ) || {}
+        ).map((roomName, index) => ({
+          label: roomName,
+          data: data.map(
+            (month) =>
+              month.rooms.find((r) => r.room === roomName)?.computers || 0
+          ),
+          backgroundColor: roomColors[index % roomColors.length],
+          borderColor: roomColors[index % roomColors.length],
+          borderWidth: 2,
+          fill: false
+        }));
+
+        window.trendChart = new Chart(ctx, {
+          type: "line",
+          data: {
+            labels: data.map((d) => d.month),
+            datasets: datasets
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: {
+                beginAtZero: true,
+                title: { display: true, text: "Nombre d'ordinateurs" },
+                grid: { color: "rgba(255, 255, 255, 0.1)" },
+                ticks: { color: "#efe9e9" }
+              },
+              x: {
+                grid: { color: "rgba(255, 255, 255, 0.1)" },
+                ticks: { color: "#efe9e9" }
+              }
+            },
+            plugins: {
+              legend: { labels: { color: "#efe9e9" } }
+            }
+          }
+        });
+      }
+
+      function populateRoomSelector(rooms) {
+        const selector = document.getElementById("roomSelector");
+        const legend = document.getElementById("legend");
+        if (!selector || !legend) {
+          console.error("Éléments roomSelector ou legend non trouvés");
+          return;
+        }
+        selector.innerHTML = "";
+        legend.innerHTML = "<strong>Légende :</strong> ";
+
+        const allRoomsBtn = document.createElement("button");
+        allRoomsBtn.className = "room-btn active";
+        allRoomsBtn.textContent = "Toutes les salles";
+        allRoomsBtn.dataset.id = "all";
+        allRoomsBtn.style.backgroundColor = roomColors[0];
+        allRoomsBtn.addEventListener("click", () => {
+          selector
+            .querySelectorAll(".room-btn")
+            .forEach((b) => b.classList.remove("active"));
+          allRoomsBtn.classList.add("active");
+          console.log("Sélection: Toutes les salles");
+          updateStats(null);
+        });
+        selector.appendChild(allRoomsBtn);
+        legend.innerHTML += `<span style="color: ${roomColors[0]}">Toutes les salles</span>`;
+
+        rooms.forEach((room, index) => {
+          const color = roomColors[(index + 1) % roomColors.length];
+          const btn = document.createElement("button");
+          btn.className = "room-btn";
+          btn.style.backgroundColor = color;
+          btn.textContent = room.nom;
+          btn.dataset.id = room.id;
+          console.log(
+            "Salle ajoutée - id:",
+            room.id,
+            "nom:",
+            room.nom,
+            "couleur:",
+            color
+          );
+          btn.addEventListener("click", () => {
+            selector
+              .querySelectorAll(".room-btn")
+              .forEach((b) => b.classList.remove("active"));
+            btn.classList.add("active");
+            console.log("Sélection: Salle", room.nom, "ID:", room.id);
+            updateStats(room.id);
+          });
+          selector.appendChild(btn);
+          legend.innerHTML += `, <span style="color: ${color}">${room.nom}</span>`;
+        });
+      }
+
+      function updateStats(selectedRoomId = null) {
+        const periode = document.getElementById("periode").value;
+        const typeActivite = document.getElementById("typeActivite").value;
+        const roomId = selectedRoomId ? parseInt(selectedRoomId, 10) : null;
+
+        if (roomId !== null && isNaN(roomId)) {
+          console.error("ID de salle invalide :", selectedRoomId);
+          return;
+        }
+
+        const url = `./scripts/get_stats.php?periode=${periode}&typeActivite=${typeActivite}${
+          roomId !== null ? `&roomId=${roomId}` : ""
+        }`;
+        console.log("Requête envoyée à:", url);
+
+        fetch(url, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${
+              localStorage.getItem("userData")
+                ? JSON.parse(localStorage.getItem("userData")).id
+                : ""
+            }`
+          }
+        })
+          .then((response) => {
+            console.log("Statut de la réponse:", response.status);
+            if (!response.ok)
+              throw new Error(`Erreur HTTP ! Statut: ${response.status}`);
+            return response.json();
+          })
+          .then((data) => {
+            console.log(
+              "Données reçues de get_stats.php:",
+              JSON.stringify(data, null, 2)
+            );
+            if (data.success) {
+              const stats = data.stats;
+              console.log(
+                "Nombre de salles dans daily_data:",
+                stats.daily_data.length
+              );
+              document.getElementById("occupationRate").textContent = `${
+                stats.occupation_rate || 0
+              }%`;
+              document.getElementById("hoursUsed").textContent = `${
+                stats.hours_used || 0
+              }h`;
+              document.getElementById("tpHours").textContent = `${
+                stats.tp_hours || 0
+              }h`;
+              document.getElementById("mostUsedRoom").textContent =
+                stats.most_used_room || "Aucune";
+              document.getElementById("mostUsedHours").textContent = `${
+                stats.most_used_hours || 0
+              }h`;
+              document.getElementById("pcUsage").textContent = `${
+                stats.pc_usage || 0
+              }%`;
+
+              const hasData = stats.total_salles > 0 || stats.hours_used > 0;
+              document.getElementById("noData").style.display = hasData
+                ? "none"
+                : "block";
+              document.getElementById("dashboardContent").style.display =
+                hasData ? "block" : "none";
+
+              renderDailyChart(stats.daily_data || []);
+              renderRoomHoursChart({
+                labels: (stats.comparison_data || []).map((item) => item.nom),
+                data: (stats.comparison_data || []).map((item) => item.hours)
+              });
+              renderComparisonChart(stats.comparison_data || []);
+              renderTrendChart(stats.material_data || []);
+            } else {
+              console.error("Erreur dans la réponse de l'API:", data.message);
+              document.getElementById("noData").style.display = "block";
+              document.getElementById("dashboardContent").style.display =
+                "none";
+            }
+          })
+          .catch((error) => {
+            console.error("Erreur fetch:", error);
+            document.getElementById("noData").style.display = "block";
+            document.getElementById("dashboardContent").style.display = "none";
+          });
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        if (typeof Chart === "undefined") {
+          console.error(
+            "Chart.js n'est pas chargé. Vérifiez la connexion ou le CDN."
+          );
+          return;
+        }
+        if (localStorage.getItem("isLoggedIn") !== "true") {
+          console.log(
+            "Utilisateur non connecté, redirection vers connexion.html"
+          );
+          window.location.href = "connexion.html";
+          return;
+        }
+
+        fetch("./scripts/classroom.php", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${
+              localStorage.getItem("userData")
+                ? JSON.parse(localStorage.getItem("userData")).id
+                : ""
+            }`
+          }
+        })
+          .then((response) => {
+            console.log("Statut de la réponse classroom.php:", response.status);
+            if (!response.ok)
+              throw new Error(`Erreur HTTP ! Statut: ${response.status}`);
+            return response.json();
+          })
+          .then((data) => {
+            console.log(
+              "Données des salles reçues:",
+              JSON.stringify(data, null, 2)
+            );
+            if (data.success && Array.isArray(data.salles)) {
+              populateRoomSelector(data.salles);
+              updateStats(null);
+            } else {
+              console.error(
+                "Erreur lors de la récupération des salles:",
+                data.message
+              );
+              document.getElementById("noData").style.display = "block";
+              document.getElementById("dashboardContent").style.display =
+                "none";
+            }
+          })
+          .catch((error) => {
+            console.error("Erreur fetch classroom.php:", error);
+            document.getElementById("noData").style.display = "block";
+            document.getElementById("dashboardContent").style.display = "none";
+          });
+
+        document
+          .getElementById("applyFilters")
+          .addEventListener("click", () => {
+            const activeRoom = document.querySelector(".room-btn.active");
+            const roomId =
+              activeRoom && activeRoom.dataset.id !== "all"
+                ? activeRoom.dataset.id
+                : null;
+            console.log(
+              "Actualisation des statistiques pour salle ID:",
+              roomId
+            );
+            updateStats(roomId);
+          });
+      });
+    </script>
+  </body>
+</html>

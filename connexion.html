@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Connexion - ESI Class Utils Manager</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .fade-in {
+        animation: fadeIn 0.5s ease-out;
+      }
+      .btn-transition {
+        transition: all 0.3s ease;
+      }
+      .btn-transition:hover {
+        transform: scale(1.05);
+      }
+    </style>
+  </head>
+  <body class="bg-[#3c424e] min-h-screen flex items-center justify-center p-4">
+    <div
+      class="bg-[#525b52] p-6 sm:p-8 rounded-lg shadow-xl border border-[#1f3a73] w-full max-w-md fade-in"
+    >
+      <h1
+        class="text-2xl sm:text-3xl font-bold text-[#80acfe] text-center mb-6"
+      >
+        Connexion
+      </h1>
+      <form id="loginForm" class="space-y-6">
+        <div>
+          <label
+            for="email"
+            class="block text-[#80acfe] font-semibold mb-2 text-sm sm:text-base"
+            >Email</label
+          >
+          <input
+            type="email"
+            id="email"
+            name="email"
+            required
+            class="w-full p-3 rounded-md bg-[#3c424e] text-white border border-[#1f3a73] focus:border-[#80acfe] focus:ring-2 focus:ring-[#80acfe] transition duration-200"
+          />
+        </div>
+        <div>
+          <label
+            for="password"
+            class="block text-[#80acfe] font-semibold mb-2 text-sm sm:text-base"
+            >Mot de passe</label
+          >
+          <input
+            type="password"
+            id="password"
+            name="password"
+            required
+            class="w-full p-3 rounded-md bg-[#3c424e] text-white border border-[#1f3a73] focus:border-[#80acfe] focus:ring-2 focus:ring-[#80acfe] transition duration-200"
+          />
+        </div>
+        <button
+          type="submit"
+          class="w-full bg-[#a25100] text-white p-3 rounded-md font-semibold text-sm sm:text-base btn-transition hover:bg-[#c26202]"
+        >
+          Se connecter
+        </button>
+        <p
+          class="error-message hidden text-[#dc3545] text-center text-sm"
+          id="errorMessage"
+        ></p>
+        <a
+          href="inscription.html"
+          class="block text-center text-[#80acfe] text-sm hover:underline transition duration-200"
+          >Pas de compte ? Inscrivez-vous</a
+        >
+      </form>
+    </div>
+
+    <script>
+      document
+        .getElementById("loginForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const email = document.getElementById("email").value;
+          const password = document.getElementById("password").value;
+          const errorMessage = document.getElementById("errorMessage");
+
+          try {
+            const response = await fetch("./scripts/login.php", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify({ email, password })
+            });
+            const data = await response.json();
+
+            if (data.success) {
+              localStorage.setItem("isLoggedIn", "true");
+              localStorage.setItem("userData", JSON.stringify(data.user));
+              window.location.href = "index.html";
+            } else {
+              errorMessage.textContent = data.message || "Erreur de connexion";
+              errorMessage.classList.remove("hidden");
+            }
+          } catch (error) {
+            errorMessage.textContent =
+              "Une erreur s'est produite. Veuillez réessayer.";
+            errorMessage.classList.remove("hidden");
+            console.error("Erreur:", error);
+          }
+        });
+    </script>
+  </body>
+</html>

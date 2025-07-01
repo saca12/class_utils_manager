@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gestion des Salles Machines - ESI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .fade-in {
+        animation: fadeIn 0.5s ease-out;
+      }
+      .btn-transition {
+        transition: all 0.3s ease;
+      }
+      .btn-transition:hover {
+        transform: scale(1.05);
+      }
+      .consommable-option {
+        transition: all 0.3s ease;
+      }
+      .consommable-option:hover {
+        transform: scale(1.02);
+      }
+      select {
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2380acfe'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 0.75rem center;
+        background-size: 1.5rem;
+        padding-right: 2.5rem;
+      }
+      select:focus {
+        box-shadow: 0 0 0 3px rgba(128, 172, 254, 0.3);
+      }
+    </style>
+  </head>
+  <body class="bg-[#3c424e] min-h-screen p-4 text-white font-sans">
+    <div
+      class="container max-w-4xl mx-auto bg-[#525b52] p-6 sm:p-8 rounded-lg shadow-xl border border-[#1f3a73] fade-in"
+    >
+      <div class="flex justify-end mb-4">
+        <button
+          id="cancel-btn"
+          class="bg-[#1f3a73] text-white px-4 py-2 rounded-md text-sm sm:text-base btn-transition hover:bg-[#2a4a8a]"
+        >
+          Annuler
+        </button>
+      </div>
+      <h1
+        class="text-2xl sm:text-3xl font-bold text-[#80acfe] text-center mb-6 border-b-2 border-[#1f3a73] pb-2"
+      >
+        Fiche Technique de la Salle Machine
+      </h1>
+
+      <form
+        id="salleForm"
+        action="./scripts/add_classroom.php"
+        method="post"
+        class="space-y-8"
+      >
+        <div
+          id="error-message"
+          class="hidden bg-red-100 text-red-600 p-4 rounded-md border border-red-600 text-center text-sm"
+        ></div>
+
+        <div class="bg-[#1f3a73]/20 p-6 rounded-md border-l-4 border-[#80acfe]">
+          <h2 class="text-xl text-[#80acfe] mb-4">Identification</h2>
+          <div class="mb-4">
+            <label
+              for="salle-nom"
+              class="block text-[#80acfe] font-semibold mb-2 text-sm sm:text-base after:content-['*'] after:text-red-600"
+              >Nom de la salle</label
+            >
+            <input
+              type="text"
+              id="salle-nom"
+              name="nom"
+              required
+              class="w-full p-3 rounded-md bg-[#3c424e] text-white border border-[#1f3a73] focus:border-[#80acfe] focus:ring-2 focus:ring-[#80acfe] transition duration-200"
+            />
+          </div>
+        </div>
+
+        <div class="bg-[#1f3a73]/20 p-6 rounded-md border-l-4 border-[#80acfe]">
+          <h2 class="text-xl text-[#80acfe] mb-4">Localisation</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label
+                for="batiment"
+                class="block text-[#80acfe] font-semibold mb-2 text-sm sm:text-base after:content-['*'] after:text-red-600"
+                >Bâtiment</label
+              >
+              <input
+                type="text"
+                id="batiment"
+                name="batiment"
+                required
+                class="w-full p-3 rounded-md bg-[#3c424e] text-white border border-[#1f3a73] focus:border-[#80acfe] focus:ring-2 focus:ring-[#80acfe] transition duration-200"
+              />
+            </div>
+            <div>
+              <label
+                for="etage"
+                class="block text-[#80acfe] font-semibold mb-2 text-sm sm:text-base"
+                >Étage</label
+              >
+              <input
+                type="text"
+                id="etage"
+                name="etage"
+                class="w-full p-3 rounded-md bg-[#3c424e] text-white border border-[#1f3a73] focus:border-[#80acfe] focus:ring-2 focus:ring-[#80acfe] transition duration-200"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-[#1f3a73]/20 p-6 rounded-md border-l-4 border-[#80acfe]">
+          <h2 class="text-xl text-[#80acfe] mb-4">Équipements</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label
+                for="nb-tables"
+                class="block text-[#80acfe] font-semibold mb-2 text-sm sm:text-base after:content-['*'] after:text-red-600"
+                >Nombre de tables</label
+              >
+              <input
+                type="number"
+                id="nb-tables"
+                name="tables"
+                min="0"
+                required
+                class="w-full p-3 rounded-md bg-[#3c424e] text-white border border-[#1f3a73] focus:border-[#80acfe] focus:ring-2 focus:ring-[#80acfe] transition duration-200"
+              />
+            </div>
+            <div>
+              <label
+                for="nb-chaises"
+                class="block text-[#80acfe] font-semibold mb-2 text-sm sm:text-base after:content-['*'] after:text-red-600"
+                >Nombre de chaises</label
+              >
+              <input
+                type="number"
+                id="nb-chaises"
+                name="chaises"
+                min="0"
+                required
+                class="w-full p-3 rounded-md bg-[#3c424e] text-white border border-[#1f3a73] focus:border-[#80acfe] focus:ring-2 focus:ring-[#80acfe] transition duration-200"
+              />
+            </div>
+            <div>
+              <label
+                for="nb-prises"
+                class="block text-[#80acfe] font-semibold mb-2 text-sm sm:text-base after:content-['*'] after:text-red-600"
+                >Nombre de prises</label
+              >
+              <input
+                type="number"
+                id="nb-prises"
+                name="prises"
+                min="0"
+                required
+                class="w-full p-3 rounded-md bg-[#3c424e] text-white border border-[#1f3a73] focus:border-[#80acfe] focus:ring-2 focus:ring-[#80acfe] transition duration-200"
+              />
+            </div>
+          </div>
+          <div class="mt-4">
+            <label
+              class="block text-[#80acfe] font-semibold mb-2 text-sm sm:text-base"
+              >Ordinateurs de la salle</label
+            >
+            <div
+              id="computersContainer"
+              class="bg-[#1f3a73]/30 p-4 rounded-md border border-[#1f3a73]"
+            >
+              <p id="noComputersMessage" class="text-white text-sm">
+                Aucun ordinateur n'a été enregistré pour cette salle.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-[#1f3a73]/20 p-6 rounded-md border-l-4 border-[#80acfe]">
+          <h2 class="text-xl text-[#80acfe] mb-4">État de la salle</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label
+                for="etat-general"
+                class="block text-[#80acfe] font-semibold mb-2 text-sm sm:text-base"
+                >État général</label
+              >
+              <select
+                id="etat-general"
+                name="etat"
+                class="w-full p-3 rounded-md bg-[#3c424e] text-white border border-[#1f3a73] focus:border-[#80acfe] focus:ring-2 focus:ring-[#80acfe] transition duration-200"
+              >
+                <option value="excellent">Excellent</option>
+                <option value="bon" selected>Bon</option>
+                <option value="moyen">Moyen</option>
+                <option value="mauvais">Mauvais</option>
+              </select>
+            </div>
+            <div>
+              <label
+                for="problemes"
+                class="block text-[#80acfe] font-semibold mb-2 text-sm sm:text-base"
+                >Problèmes connus</label
+              >
+              <textarea
+                id="problemes"
+                name="problemes"
+                rows="4"
+                class="w-full p-3 rounded-md bg-[#3c424e] text-white border border-[#1f3a73] focus:border-[#80acfe] focus:ring-2 focus:ring-[#80acfe] transition duration-200"
+              ></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-[#1f3a73]/20 p-6 rounded-md border-l-4 border-[#80acfe]">
+          <h2 class="text-xl text-[#80acfe] mb-4">Consommables</h2>
+          <div class="mb-4">
+            <label
+              class="block text-[#80acfe] font-semibold mb-2 text-sm sm:text-base"
+              >Sélectionnez les consommables nécessaires</label
+            >
+            <div class="flex flex-wrap gap-4">
+              <label
+                class="consommable-option bg-[#3c424e] p-3 rounded-full border border-[#1f3a73] flex items-center cursor-pointer text-white text-sm sm:text-base"
+              >
+                <input
+                  type="checkbox"
+                  name="consommable"
+                  value="papier"
+                  class="hidden"
+                />
+                Papier
+                <span class="quantite-consommable hidden ml-2">
+                  Qté:
+                  <input
+                    type="number"
+                    name="quantite-papier"
+                    min="0"
+                    value="0"
+                    class="w-16 p-1 bg-[#3c424e] text-white border border-[#1f3a73] rounded"
+                  />
+                </span>
+              </label>
+              <label
+                class="consommable-option bg-[#3c424e] p-3 rounded-full border border-[#1f3a73] flex items-center cursor-pointer text-white text-sm sm:text-base"
+              >
+                <input
+                  type="checkbox"
+                  name="consommable"
+                  value="craies"
+                  class="hidden"
+                />
+                Boîtes de craies
+                <span class="quantite-consommable hidden ml-2">
+                  Qté:
+                  <input
+                    type="number"
+                    name="quantite-craies"
+                    min="0"
+                    value="0"
+                    class="w-16 p-1 bg-[#3c424e] text-white border border-[#1f3a73] rounded"
+                  />
+                </span>
+              </label>
+              <label
+                class="consommable-option bg-[#3c424e] p-3 rounded-full border border-[#1f3a73] flex items-center cursor-pointer text-white text-sm sm:text-base"
+              >
+                <input
+                  type="checkbox"
+                  name="consommable"
+                  value="cables"
+                  class="hidden"
+                />
+                Câbles divers
+                <span class="quantite-consommable hidden ml-2">
+                  Qté:
+                  <input
+                    type="number"
+                    name="quantite-cables"
+                    min="0"
+                    value="0"
+                    class="w-16 p-1 bg-[#3c424e] text-white border border-[#1f3a73] rounded"
+                  />
+                </span>
+              </label>
+              <label
+                class="consommable-option bg-[#3c424e] p-3 rounded-full border border-[#1f3a73] flex items-center cursor-pointer text-white text-sm sm:text-base"
+              >
+                <input
+                  type="checkbox"
+                  name="consommable"
+                  value="nettoyage"
+                  class="hidden"
+                />
+                Produits de nettoyage
+                <span class="quantite-consommable hidden ml-2">
+                  Qté:
+                  <input
+                    type="number"
+                    name="quantite-nettoyage"
+                    min="0"
+                    value="0"
+                    class="w-16 p-1 bg-[#3c424e] text-white border border-[#1f3a73] rounded"
+                  />
+                </span>
+              </label>
+            </div>
+          </div>
+          <div>
+            <label
+              for="commentaires-consommables"
+              class="block text-[#80acfe] font-semibold mb-2 text-sm sm:text-base"
+              >Commentaires sur les consommables</label
+            >
+            <textarea
+              id="commentaires-consommables"
+              name="commentaires-consommables"
+              rows="3"
+              class="w-full p-3 rounded-md bg-[#3c424e] text-white border border-[#1f3a73] focus:border-[#80acfe] focus:ring-2 focus:ring-[#80acfe] transition duration-200"
+            ></textarea>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap gap-4">
+          <button
+            type="submit"
+            class="flex-1 bg-[#a25100] text-white p-3 rounded-md font-semibold text-sm sm:text-base btn-transition hover:bg-[#c26202]"
+          >
+            Enregistrer la salle
+          </button>
+        </div>
+      </form>
+
+      <div class="mt-4">
+        <a
+          id="addComputerBtn"
+          href=""
+          class="flex-1 bg-[#1f3a73] text-white p-3 rounded-md text-center text-sm sm:text-base btn-transition hover:bg-[#2a4a8a]"
+        >
+          Ajouter un ordinateur à la salle
+        </a>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        if (localStorage.getItem("isLoggedIn") !== "true") {
+          window.location.href = "connexion.html";
+          return;
+        }
+        const userData = JSON.parse(localStorage.getItem("userData"));
+        if (!userData || !userData.id) {
+          localStorage.removeItem("isLoggedIn");
+          localStorage.removeItem("userData");
+          window.location.href = "connexion.html";
+          return;
+        }
+        const cancelBtn = document.getElementById("cancel-btn");
+        cancelBtn.addEventListener("click", () => {
+          window.location.href = "index.html#classroom_manager?salles";
+        });
+        const checkboxes = document.querySelectorAll(
+          'input[name="consommable"]'
+        );
+        checkboxes.forEach((checkbox) => {
+          checkbox.addEventListener("change", function () {
+            const quantiteSpan = this.parentElement.querySelector(
+              ".quantite-consommable"
+            );
+            quantiteSpan.classList.toggle("hidden", !this.checked);
+            this.parentElement.classList.toggle("bg-[#a25100]", this.checked);
+            this.parentElement.classList.toggle(
+              "border-[#a25100]",
+              this.checked
+            );
+          });
+        });
+        const form = document.getElementById("salleForm");
+        const errorDiv = document.getElementById("error-message");
+        const addComputerBtn = document.getElementById("addComputerBtn");
+        const errorMessage = sessionStorage.getItem("error_message");
+        if (errorMessage) {
+          errorDiv.textContent = errorMessage;
+          errorDiv.classList.remove("hidden");
+          sessionStorage.removeItem("error_message");
+        }
+
+        const tempClassroomId = Math.floor(
+          10000000 + Math.random() * 90000000
+        ).toString();
+        addComputerBtn.href = `carac_interne.html?classroom_id=${tempClassroomId}`;
+
+        form.addEventListener("submit", async function (e) {
+          e.preventDefault();
+          errorDiv.textContent = "";
+          errorDiv.classList.add("hidden");
+          const formData = new FormData(form);
+          const salleData = {
+            user_id: userData.id,
+            nom: formData.get("nom"),
+            batiment: formData.get("batiment"),
+            etage: formData.get("etage") || "Non spécifié",
+            tables: parseInt(formData.get("tables")) || 0,
+            chaises: parseInt(formData.get("chaises")) || 0,
+            prises: parseInt(formData.get("prises")) || 0,
+            etat: formData.get("etat"),
+            problemes: formData.get("problemes") || "",
+            disponible: true,
+            consommables: []
+          };
+          formData.getAll("consommable").forEach((type) => {
+            const quantite = parseInt(formData.get(`quantite-${type}`)) || 0;
+            if (quantite > 0) {
+              salleData.consommables.push({
+                type: type,
+                quantite: quantite,
+                commentaires: formData.get("commentaires-consommables") || ""
+              });
+            }
+          });
+          try {
+            const response = await fetch(form.action, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify(salleData)
+            });
+            const data = await response.json();
+            if (data.success) {
+              errorDiv.textContent = "Salle enregistrée avec succès !";
+              errorDiv.classList.remove("hidden");
+              errorDiv.classList.add(
+                "bg-green-100",
+                "text-green-600",
+                "border-green-600"
+              );
+              setTimeout(() => {
+                window.location.href = "index.html#classroom_manager?salles";
+              }, 2000);
+            } else {
+              errorDiv.textContent =
+                data.message || "Erreur lors de l'enregistrement";
+              errorDiv.classList.remove("hidden");
+            }
+          } catch (error) {
+            console.error("Erreur fetch :", error);
+            errorDiv.textContent =
+              "Une erreur s'est produite : " + error.message;
+            errorDiv.classList.remove("hidden");
+          }
+        });
+
+        addComputerBtn.addEventListener("click", (e) => {
+          e.preventDefault();
+          window.location.href = addComputerBtn.href;
+        });
+
+        if (window.history.replaceState) {
+          window.history.replaceState(
+            null,
+            document.title,
+            window.location.pathname
+          );
+        }
+      });
+    </script>
+  </body>
+</html>

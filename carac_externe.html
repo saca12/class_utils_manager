@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Caractéristiques Externes de l'Ordinateur - ESI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .fade-in {
+        animation: fadeIn 0.5s ease-out;
+      }
+      .btn-transition {
+        transition: all 0.3s ease;
+      }
+      .btn-transition:hover {
+        transform: scale(1.05);
+      }
+      select {
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2380acfe'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 0.75rem center;
+        background-size: 1.5rem;
+        padding-right: 2.5rem;
+      }
+      select:focus {
+        box-shadow: 0 0 0 3px rgba(128, 172, 254, 0.3);
+      }
+      footer {
+        background: linear-gradient(180deg, #1f3a73 0%, #2a4a8f 100%);
+        box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.2);
+      }
+      footer a:hover {
+        transform: translateY(-2px);
+        transition: transform 0.2s ease, color 0.2s ease;
+      }
+      footer svg {
+        transition: transform 0.2s ease, color 0.2s ease;
+      }
+      footer svg:hover {
+        transform: scale(1.2);
+      }
+    </style>
+  </head>
+  <body class="bg-[#3c424e] min-h-screen p-4 text-white font-sans">
+    <div
+      class="container max-w-4xl mx-auto bg-[#525b52] p-6 sm:p-8 rounded-lg shadow-xl border border-[#1f3a73] fade-in"
+    >
+      <h1
+        class="text-2xl sm:text-3xl font-bold text-[#80acfe] text-center mb-6 border-b-2 border-[#1f3a73] pb-2"
+      >
+        Caractéristiques Externes de l'Ordinateur
+      </h1>
+
+      <form
+        id="computerForm"
+        action="./scripts/add_computer.php"
+        <!--
+        Mis
+        à
+        jour
+        --
+      >
+        <form method="post" class="space-y-8" >
+        <input type="hidden" id="classroom_id" name="classroom_id" />
+        <div
+          id="error-message"
+          class="hidden bg-red-100 text-red-600 p-4 rounded-md border border-red-600 text-center text-sm"
+        ></div>
+
+        <div class="bg-[#1f3a73]/20 p-6 rounded-md border-l-4 border-[#80acfe]">
+          <h2 class="text-xl text-[#80acfe] mb-4">Caractéristiques Externes</h2>
+          <div class="grid grid-cols-1 gap-4">
+            <div>
+              <label
+                for="os"
+                class="block text-[#80acfe] font-semibold mb-2 text-sm sm:text-base after:content-['*'] after:text-red-600"
+                >Système d'exploitation</label
+              >
+              <select
+                id="os"
+                name="os"
+                required
+                class="w-full p-3 rounded-md bg-[#3c424e] text-white border border-[#1f3a73] focus:border-[#80acfe] focus:ring-2 focus:ring-[#80acfe] transition duration-200"
+                aria-required="true"
+              >
+                <option value="Windows">Windows</option>
+                <option value="Linux">Linux</option>
+                <option value="macOS">macOS</option>
+                <option value="Other">Autre</option>
+              </select>
+            </div>
+
+            <div>
+              <label
+                for="carte_reseau"
+                class="block text-[#80acfe] font-semibold mb-2 text-sm sm:text-base"
+                >Carte réseau</label
+              >
+              <input
+                type="text"
+                id="carte_reseau"
+                name="carte_reseau"
+                placeholder="Ex: Intel Ethernet"
+                class="w-full p-3 rounded-md bg-[#3c424e] text-white border border-[#1f3a73] focus:border-[#80acfe] focus:ring-2 focus:ring-[#80acfe] transition duration-200"
+              />
+            </div>
+
+            <div>
+              <label
+                for="etat"
+                class="block text-[#80acfe] font-semibold mb-2 text-sm sm:text-base after:content-['*'] after:text-red-600"
+                >État de l'ordinateur</label
+              >
+              <select
+                id="etat"
+                name="etat"
+                required
+                class="w-full p-3 rounded-md bg-[#3c424e] text-white border border-[#1f3a73] focus:border-[#80acfe] focus:ring-2 focus:ring-[#80acfe] transition duration-200"
+                aria-required="true"
+              >
+                <option value="fonctionnel">Fonctionnel</option>
+                <option value="en_panne">En panne</option>
+                <option value="a_reparer">À réparer</option>
+              </select>
+            </div>
+
+            <div>
+              <label
+                for="ports"
+                class="block text-[#80acfe] font-semibold mb-2 text-sm sm:text-base"
+                >Ports disponibles</label
+              >
+              <textarea
+                id="ports"
+                name="ports"
+                rows="3"
+                placeholder="Ex: 3xUSB, HDMI, Ethernet"
+                class="w-full p-3 rounded-md bg-[#3c424e] text-white border border-[#1f3a73] focus:border-[#80acfe] focus:ring-2 focus:ring-[#80acfe] transition duration-200"
+              ></textarea>
+            </div>
+
+            <div>
+              <label
+                class="block text-[#80acfe] font-semibold mb-2 text-sm sm:text-base"
+                >Périphériques connectés</label
+              >
+              <div class="flex flex-wrap gap-4">
+                <label
+                  class="bg-[#3c424e] p-3 rounded-full border border-[#1f3a73] flex items-center cursor-pointer text-white text-sm sm:text-base"
+                >
+                  <input
+                    type="checkbox"
+                    name="peripheriques[]"
+                    value="ecran"
+                    class="hidden"
+                  />
+                  Écran
+                </label>
+                <label
+                  class="bg-[#3c424e] p-3 rounded-full border border-[#1f3a73] flex items-center cursor-pointer text-white text-sm sm:text-base"
+                >
+                  <input
+                    type="checkbox"
+                    name="peripheriques[]"
+                    value="clavier"
+                    class="hidden"
+                  />
+                  Clavier
+                </label>
+                <label
+                  class="bg-[#3c424e] p-3 rounded-full border border-[#1f3a73] flex items-center cursor-pointer text-white text-sm sm:text-base"
+                >
+                  <input
+                    type="checkbox"
+                    name="peripheriques[]"
+                    value="souris"
+                    class="hidden"
+                  />
+                  Souris
+                </label>
+                <label
+                  class="bg-[#3c424e] p-3 rounded-full border border-[#1f3a73] flex items-center cursor-pointer text-white text-sm sm:text-base"
+                >
+                  <input
+                    type="checkbox"
+                    name="peripheriques[]"
+                    value="casque"
+                    class="hidden"
+                  />
+                  Casque
+                </label>
+              </div>
+            </div>
+
+            <div>
+              <label
+                for="logiciels"
+                class="block text-[#80acfe] font-semibold mb-2 text-sm sm:text-base"
+                >Logiciels installés</label
+              >
+              <textarea
+                id="logiciels"
+                name="logiciels"
+                rows="3"
+                placeholder="Ex: VS Code, Chrome, Python, Matlab"
+                class="w-full p-3 rounded-md bg-[#3c424e] text-white border border-[#1f3a73] focus:border-[#80acfe] focus:ring-2 focus:ring-[#80acfe] transition duration-200"
+              ></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap gap-4">
+          <button
+            type="button"
+            onclick="window.location.href = document.getElementById('classroom_id').value ? 'carac_interne.html?classroom_id=' + document.getElementById('classroom_id').value : 'index.html';"
+            class="flex-1 bg-[#1f3a73] text-white p-3 rounded-md text-center text-sm sm:text-base btn-transition hover:bg-[#2a4a8a]"
+          >
+            Ajouter un autre ordinateur
+          </button>
+          <button
+            type="submit"
+            class="flex-1 bg-[#a25100] text-white p-3 rounded-md font-semibold text-sm sm:text-base btn-transition hover:bg-[#c26202]"
+          >
+            Enregistrer l'ordinateur
+          </button>
+        </div>
+      </form>
+    </div>
+
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const urlParams = new URLSearchParams(window.location.search);
+        const classroomId = urlParams
+          .get("classroom_id")
+          ?.replace("salle_", "");
+        const errorDiv = document.getElementById("error-message");
+
+        if (!classroomId) {
+          errorDiv.textContent = "ID de salle manquant.";
+          errorDiv.classList.remove("hidden");
+          return;
+        }
+        document.getElementById("classroom_id").value = classroomId;
+
+        const computerData = JSON.parse(
+          localStorage.getItem("computerData") || "{}"
+        );
+        if (!computerData || !computerData.modele) {
+          errorDiv.textContent =
+            "Données de l'ordinateur manquantes (modèle requis).";
+          errorDiv.classList.remove("hidden");
+          return;
+        }
+
+        const form = document.getElementById("computerForm");
+        const checkboxes = document.querySelectorAll(
+          'input[name="peripheriques[]"]'
+        );
+        checkboxes.forEach((checkbox) => {
+          checkbox.addEventListener("change", function () {
+            this.parentElement.classList.toggle("bg-[#a25100]", this.checked);
+            this.parentElement.classList.toggle(
+              "border-[#a25100]",
+              this.checked
+            );
+          });
+        });
+
+        form.addEventListener("submit", async function (e) {
+          e.preventDefault();
+          errorDiv.textContent = "";
+          errorDiv.classList.add("hidden");
+
+          if (!computerData.modele) {
+            errorDiv.textContent = "Le modèle est requis.";
+            errorDiv.classList.remove("hidden");
+            return;
+          }
+
+          const formData = new FormData(form);
+          const combinedData = {
+            classroom_id: classroomId,
+            marque: computerData.marque,
+            modele: computerData.modele,
+            ram: computerData.ram,
+            processeur: computerData.processeur ?? null,
+            disque: computerData.disque ?? null,
+            quantite: computerData.quantite ?? 1,
+            os: formData.get("os"),
+            carte_reseau: formData.get("carte_reseau") || null,
+            etat: formData.get("etat"),
+            ports: formData.get("ports") || null,
+            peripheriques:
+              formData.getAll("peripheriques[]").join(", ") || null,
+            logiciels: formData.get("logiciels") || null
+          };
+
+          try {
+            const response = await fetch(form.action, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(combinedData)
+            });
+
+            if (!response.ok) {
+              throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            if (data.success) {
+              console.log("Succès:", data.message);
+              // Rediriger vers gestion_des_salles.html
+              window.location.href = "index.html?classroomContent";
+            } else {
+              errorDiv.textContent =
+                data.message || "Erreur lors de l'enregistrement";
+              errorDiv.classList.remove("hidden");
+            }
+          } catch (error) {
+            console.error("Erreur fetch:", error);
+            errorDiv.textContent =
+              "Une erreur s'est produite: " + error.message;
+            errorDiv.classList.remove("hidden");
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
