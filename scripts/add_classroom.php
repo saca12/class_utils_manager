@@ -6,7 +6,7 @@ $host = "localhost";
 $port = "5432";
 $dbname = "esi_class_manager";
 $user = "postgres";
-$password = "16269758h";
+$password = "00000000";
 
 try {
     $conn = new PDO("pgsql:host=$host;port=$port;dbname=$dbname;user=$user;password=$password");
